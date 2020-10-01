@@ -24,7 +24,7 @@ namespace Keeper.ConsoleApp
 
             foreach (var qb in quarterbacks.Values)
             {
-                Console.WriteLine(qb.Name);
+                Console.WriteLine($"{qb.Id} - {qb.Name} - {qb.Position} - {qb.Team?.Name} - {qb.Team?.Opponent} - {qb.Team?.Location} - {qb.Points}");
             }
 
             Console.WriteLine(quarterbacks.TotalCount);
