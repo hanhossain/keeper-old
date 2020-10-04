@@ -18,13 +18,13 @@ namespace Keeper.ConsoleApp
             var httpClient = new HttpClient();
             var fantasyClient = new FantasyClient(httpClient);
 
-            var players = await fantasyClient.GetAsync(Position.Kicker, 2020, 3, 0);
+            var players = await fantasyClient.GetAsync(Position.Defense, 2020, 3, 0);
 
             foreach (var player in players.Values)
             {
-                if (player.Statistics is KickingStatistics statistics)
+                if (player.Statistics is DefensiveStatistics statistics)
                 {
-                    Console.WriteLine($"{player.Name} - {player.Team?.Name} - {statistics.FantasyPoints} - {statistics.Pat.Made}");
+                    Console.WriteLine($"{player.Name} - {player.Team?.Name} - {statistics.FantasyPoints} - {statistics.Points.PointsAllowed}");
                 }
             }
 

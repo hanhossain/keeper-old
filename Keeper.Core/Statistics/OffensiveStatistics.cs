@@ -10,7 +10,7 @@ namespace Keeper.Core.Statistics
             Passing = new PassingStatistics(row);
             Rushing = new RushingStatistics(row);
             Receiving = new ReceivingStatistics(row);
-            Returning = new ReturningStatistics(row);
+            Returning = new ReturningStatistics(row, true);
             Miscellaneous = new MiscellaneousStatistics(row);
             Fumble = new FumbleStatistics(row);
         }

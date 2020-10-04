@@ -4,9 +4,10 @@ namespace Keeper.Core.Statistics
 {
     public class ReturningStatistics
     {
-        public ReturningStatistics(IElement row)
+        public ReturningStatistics(IElement row, bool isOffense)
         {
-            if (int.TryParse(row.QuerySelector(".stat_28").TextContent, out var touchdowns))
+            var selector = isOffense ? ".stat_28" : ".stat_53";
+            if (int.TryParse(row.QuerySelector(selector).TextContent, out var touchdowns))
             {
                 Touchdowns = touchdowns;
             }

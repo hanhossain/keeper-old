@@ -17,7 +17,7 @@ namespace Keeper.Core
             Statistics = Position switch
             {
                 Position.Kicker => new KickingStatistics(row),
-                Position.Defense => throw new NotImplementedException(),
+                Position.Defense => new DefensiveStatistics(row),
                 _ => new OffensiveStatistics(row)
             };
         }
@@ -27,7 +27,7 @@ namespace Keeper.Core
         public string Name { get; }
 
         public Position Position { get; }
-
+        
         public Team Team { get; }
 
         public PlayerStatistics Statistics { get; }
@@ -50,6 +50,7 @@ namespace Keeper.Core
 
             if (positionAndTeamInfo.Length == 2)
             {
+                // TODO: this doesn't work for defense
                 var teamName = positionAndTeamInfo[1];
                 var opponent = row.QuerySelector(".playerOpponent").TextContent;
                 var location = opponent.StartsWith('@') ? Location.Away : Location.Home;
