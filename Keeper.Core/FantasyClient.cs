@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp;
-using AngleSharp.Dom;
 
 namespace Keeper.Core
 {
