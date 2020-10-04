@@ -1,10 +1,10 @@
 using AngleSharp.Dom;
 
-namespace Keeper.Core
+namespace Keeper.Core.Statistics
 {
-    public abstract class Statistics
+    public abstract class PlayerStatistics
     {
-        protected Statistics(IElement row)
+        protected PlayerStatistics(IElement row)
         {
             FantasyPoints = double.Parse(row.QuerySelector(".playerTotal").TextContent);
         }

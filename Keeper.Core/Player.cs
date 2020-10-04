@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AngleSharp.Dom;
+using Keeper.Core.Statistics;
 
 namespace Keeper.Core
 {
@@ -29,7 +30,7 @@ namespace Keeper.Core
 
         public Team Team { get; }
 
-        public Statistics Statistics { get; }
+        public PlayerStatistics Statistics { get; }
         
         private (Position, Team) ParsePositionAndTeam(IElement row)
         {

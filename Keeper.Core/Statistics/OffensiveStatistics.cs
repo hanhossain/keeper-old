@@ -1,8 +1,8 @@
 using AngleSharp.Dom;
 
-namespace Keeper.Core
+namespace Keeper.Core.Statistics
 {
-    public class OffensiveStatistics : Statistics
+    public class OffensiveStatistics : PlayerStatistics
     {
         public OffensiveStatistics(IElement row)
             : base(row)

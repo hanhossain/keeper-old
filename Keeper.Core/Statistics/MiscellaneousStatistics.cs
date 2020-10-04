@@ -1,6 +1,6 @@
 using AngleSharp.Dom;
 
-namespace Keeper.Core
+namespace Keeper.Core.Statistics
 {
     public class MiscellaneousStatistics
     {

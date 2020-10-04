@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Text;
 using Keeper.Core;
+using Keeper.Core.Statistics;
 
 namespace Keeper.ConsoleApp
 {
