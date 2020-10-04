@@ -3,11 +3,11 @@ namespace Keeper.Core
     public enum Position
     {
         Offense = 0,
-        Quarterback,
-        RunningBack,
-        WideReceiver,
-        TightEnd,
-        Kicker,
-        Defense
+        Quarterback = 1,
+        RunningBack = 2,
+        WideReceiver = 3,
+        TightEnd = 4,
+        Kicker = 7,
+        Defense = 8
     }
 }

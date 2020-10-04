@@ -16,7 +16,7 @@ namespace Keeper.Core
 
             Statistics = Position switch
             {
-                Position.Kicker => throw new NotImplementedException(),
+                Position.Kicker => new KickingStatistics(row),
                 Position.Defense => throw new NotImplementedException(),
                 _ => new OffensiveStatistics(row)
             };
