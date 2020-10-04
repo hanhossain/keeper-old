@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -37,66 +36,16 @@ namespace Keeper.Core
             
             var tableBody = document.QuerySelector("table tbody");
 
-            var players = tableBody.QuerySelectorAll("tr").Select(ParsePlayer).ToList();
+            var players = tableBody
+                .QuerySelectorAll("tr")
+                .Select(x => new Player(x))
+                .ToList();
 
             return new PageResult<Player>()
             {
                 TotalCount = totalCount,
                 Values = players
             };
-        }
-
-        private Player ParsePlayer(IElement row)
-        {
-            var id = int.Parse(row.GetAttribute("class").Split(' ', '-')[1]);
-            var name = row.QuerySelector(".playerName").TextContent;
-            
-            var (position, team) = ParsePositionAndTeam(row);
-
-            var points = double.Parse(row.QuerySelector(".playerTotal").TextContent);
-
-            return new Player
-            {
-                Id = id,
-                Name = name,
-                Position = position,
-                Team = team,
-                Points = points
-            };
-        }
-
-        private (Position, Team) ParsePositionAndTeam(IElement row)
-        {
-            var positionAndTeamInfo = row.QuerySelector(".playerNameAndInfo em").TextContent.Split('-');
-            var position = positionAndTeamInfo.First().Trim() switch
-            {
-                "QB" => Position.Quarterback,
-                "RB" => Position.RunningBack,
-                "WR" => Position.WideReceiver,
-                "TE" => Position.TightEnd,
-                "K" => Position.Kicker,
-                "DEF" => Position.Defense,
-                _ => throw new ArgumentException("Invalid position")
-            };
-
-            Team team = null;
-
-            if (positionAndTeamInfo.Length == 2)
-            {
-                var teamName = positionAndTeamInfo[1];
-                var opponent = row.QuerySelector(".playerOpponent").TextContent;
-                var location = opponent.StartsWith('@') ? Location.Away : Location.Home;
-                opponent = opponent.TrimStart('@');
-
-                team = new Team()
-                {
-                    Name = teamName,
-                    Opponent = opponent,
-                    Location = location
-                };
-            }
-
-            return (position, team);
         }
     }
 }

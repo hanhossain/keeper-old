@@ -1,17 +1,68 @@
+using System;
+using System.Linq;
+using AngleSharp.Dom;
+
 namespace Keeper.Core
 {
     public class Player
     {
-        public int Id { get; set; }
+        public Player(IElement row)
+        {
+            Id = int.Parse(row.GetAttribute("class").Split(' ', '-')[1]);
+            Name = row.QuerySelector(".playerName").TextContent;
+            
+            (Position, Team) = ParsePositionAndTeam(row);
 
-        public string Name { get; set; }
+            Statistics = Position switch
+            {
+                Position.Kicker => throw new NotImplementedException(),
+                Position.Defense => throw new NotImplementedException(),
+                _ => new OffensiveStatistics(row)
+            };
+        }
+        
+        public int Id { get; }
 
-        public Position Position { get; set; }
+        public string Name { get; }
 
-        public Team Team { get; set; }
+        public Position Position { get; }
 
-        public double Points { get; set; }
+        public Team Team { get; }
 
-        public PassingStatistics Passing { get; set; }
+        public Statistics Statistics { get; }
+        
+        private (Position, Team) ParsePositionAndTeam(IElement row)
+        {
+            var positionAndTeamInfo = row.QuerySelector(".playerNameAndInfo em").TextContent.Split('-');
+            var position = positionAndTeamInfo.First().Trim() switch
+            {
+                "QB" => Position.Quarterback,
+                "RB" => Position.RunningBack,
+                "WR" => Position.WideReceiver,
+                "TE" => Position.TightEnd,
+                "K" => Position.Kicker,
+                "DEF" => Position.Defense,
+                _ => throw new ArgumentException("Invalid position")
+            };
+
+            Team team = null;
+
+            if (positionAndTeamInfo.Length == 2)
+            {
+                var teamName = positionAndTeamInfo[1];
+                var opponent = row.QuerySelector(".playerOpponent").TextContent;
+                var location = opponent.StartsWith('@') ? Location.Away : Location.Home;
+                opponent = opponent.TrimStart('@');
+
+                team = new Team()
+                {
+                    Name = teamName,
+                    Opponent = opponent,
+                    Location = location
+                };
+            }
+
+            return (position, team);
+        }
     }
 }

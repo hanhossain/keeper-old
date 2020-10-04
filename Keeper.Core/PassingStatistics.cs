@@ -1,11 +1,31 @@
-﻿namespace Keeper.Core
+﻿using AngleSharp.Dom;
+
+namespace Keeper.Core
 {
     public class PassingStatistics
     {
-        public int? Yards { get; set; }
+        public PassingStatistics(IElement row)
+        {
+            if (int.TryParse(row.QuerySelector(".stat_5").TextContent, out var passingYards))
+            {
+                Yards = passingYards;
+            }
+
+            if (int.TryParse(row.QuerySelector(".stat_6").TextContent, out var passingTouchdowns))
+            {
+                Touchdowns = passingTouchdowns;
+            }
+
+            if (int.TryParse(row.QuerySelector(".stat_7").TextContent, out var passingInterceptions))
+            {
+                Interceptions = passingInterceptions;
+            }
+        }
         
-        public int? Touchdowns { get; set; }
+        public int? Yards { get; }
         
-        public int? Interceptions { get; set; }
+        public int? Touchdowns { get; }
+        
+        public int? Interceptions { get; }
     }
 }
