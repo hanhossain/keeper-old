@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp;
@@ -7,6 +9,7 @@ namespace Keeper.Core
 {
     public class FantasyClient
     {
+        private const int PageSize = 25;
         private readonly HttpClient _httpClient;
 
         public FantasyClient(HttpClient httpClient)
@@ -14,9 +17,11 @@ namespace Keeper.Core
             _httpClient = httpClient;
         }
 
-        public async Task<PageResult<Player>> GetAsync(Position position, int season, int week, int offset)
+        public async Task<PageResult<Player>> GetAsync(int season, int week, int offset, Position? position = null)
         {
-            string uri = $"https://fantasy.nfl.com/research/players?offset={offset}&position={(int)position}" +
+            string positionQuery = position != null ? $"&position={(int)position}" : string.Empty;
+            
+            string uri = $"https://fantasy.nfl.com/research/players?offset={offset}{positionQuery}" +
                          $"&sort=pts&statCategory=stats&statSeason={season}&statType=weekStats&statWeek={week}";
 
             await using var stream = await _httpClient.GetStreamAsync(uri);
@@ -34,16 +39,41 @@ namespace Keeper.Core
             
             var tableBody = document.QuerySelector("table tbody");
 
-            var players = tableBody
+            var players = tableBody?
                 .QuerySelectorAll("tr")
                 .Select(x => new Player(x))
-                .ToList();
+                .ToList() ?? new List<Player>();
 
             return new PageResult<Player>()
             {
                 TotalCount = totalCount,
                 Values = players
             };
+        }
+
+        public async Task<List<Player>> GetAsync(int season, int week, Position? position = null)
+        {
+            var week1Results = await GetAsync(season, week, 1, position);
+
+            var tasks = new List<Task<PageResult<Player>>>();
+            
+            for (int i = PageSize + 1; i <= week1Results.TotalCount; i += PageSize)
+            {
+                var task = GetAsync(season, week, i, position);
+                tasks.Add(task);
+            }
+
+            var results = await Task.WhenAll(tasks);
+            var players = new List<Player>();
+
+            players.AddRange(week1Results.Values);
+
+            foreach (var weekResults in results)
+            {
+                players.AddRange(weekResults.Values);
+            }
+
+            return players;
         }
     }
 }

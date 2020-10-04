@@ -1,13 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AngleSharp;
-using AngleSharp.Text;
 using Keeper.Core;
-using Keeper.Core.Statistics;
 
 namespace Keeper.ConsoleApp
 {
@@ -18,17 +13,11 @@ namespace Keeper.ConsoleApp
             var httpClient = new HttpClient();
             var fantasyClient = new FantasyClient(httpClient);
 
-            var players = await fantasyClient.GetAsync(Position.Defense, 2020, 3, 0);
-
-            foreach (var player in players.Values)
-            {
-                if (player.Statistics is DefensiveStatistics statistics)
-                {
-                    Console.WriteLine($"{player.Name} - {player.Team?.Name} - {statistics.FantasyPoints} - {statistics.Points.PointsAllowed}");
-                }
-            }
-
-            Console.WriteLine(players.TotalCount);
+            var stopwatch = Stopwatch.StartNew();
+            var all = await fantasyClient.GetAsync(2019, 1);
+            stopwatch.Stop();
+            
+            Console.WriteLine($"Retrieved {all.Count} in {stopwatch.ElapsedMilliseconds / 1000.0} seconds");
         }
     }
 }
