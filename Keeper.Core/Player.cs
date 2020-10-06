@@ -58,8 +58,8 @@ namespace Keeper.Core
 
                 team = new Team()
                 {
-                    Name = teamName,
-                    Opponent = opponent,
+                    Name = teamName.Trim(),
+                    Opponent = opponent.Trim(),
                     Location = location
                 };
             }
