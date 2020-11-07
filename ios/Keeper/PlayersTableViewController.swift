@@ -29,9 +29,8 @@ class PlayersTableViewController: UITableViewController {
                     self.sections.append(firstLetter)
                 }
                 
-                if var grouped = self.players[firstLetter] {
-                    grouped.append(player)
-                    self.players[firstLetter] = grouped
+                if self.players[firstLetter] != nil {
+                    self.players[firstLetter]!.append(player)
                 } else {
                     self.players[firstLetter] = [player]
                 }
@@ -49,7 +48,6 @@ class PlayersTableViewController: UITableViewController {
         return sections.count
     }
     
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return players[sections[section]]?.count ?? 0
     }
