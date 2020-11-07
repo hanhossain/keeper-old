@@ -25,10 +25,6 @@ class PlayerService {
                     return left.lastName < right.lastName
                 }
             
-            if let player = players.first {
-                print(player)
-            }
-            
             completion(players)
         }
     }
