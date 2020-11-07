@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Players Table View Controller-->
+        <!--Players-->
         <scene sceneID="ILf-SZ-sNz">
             <objects>
                 <tableViewController id="EMN-Vf-8S7" customClass="PlayersTableViewController" customModule="Keeper" customModuleProvider="target" sceneMemberID="viewController">
@@ -30,7 +30,7 @@
                             <outlet property="delegate" destination="EMN-Vf-8S7" id="gLd-VY-nMd"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="qIY-st-TgM"/>
+                    <navigationItem key="navigationItem" title="Players" id="qIY-st-TgM"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ITS-2Q-AS6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

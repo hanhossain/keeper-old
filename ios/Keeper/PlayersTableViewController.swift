@@ -20,7 +20,7 @@ class PlayersTableViewController: UITableViewController {
         playerService.getPlayers { (players) in
             
             for player in players {
-                var firstLetter = player.lastName.first!
+                var firstLetter = player.lastName.uppercased().first!
                 if firstLetter.isNumber {
                     firstLetter = "#"
                 }
@@ -61,6 +61,14 @@ class PlayersTableViewController: UITableViewController {
         cell.textLabel?.text = player?.name
 
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return String(sections[section])
+    }
+    
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        return sections.map { String($0) }
     }
 
     /*
