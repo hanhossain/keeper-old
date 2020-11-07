@@ -16,4 +16,8 @@ struct Player {
     var name: String {
         return "\(firstName) \(lastName)"
     }
+    
+    var positionAndTeam: String {
+        return "\(position) - \(team ?? "")"
+    }
 }

@@ -57,7 +57,7 @@ class PlayersTableViewController: UITableViewController {
         
         if let player = players[sections[indexPath.section]]?[indexPath.row] {
             cell.textLabel?.text = player.name
-            cell.detailTextLabel?.text = "\(player.position) - \(player.team ?? "")"
+            cell.detailTextLabel?.text = player.positionAndTeam
         }
 
         return cell
