@@ -10,19 +10,14 @@ import UIKit
 class PlayersTableViewController: UITableViewController {
     
     let cellId = "player"
-    var players = [SleeperPlayer]()
+    var players = [Player]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let sleeper = SleeperService()
-        sleeper.getPlayers { (players) in
-            self.players = players.values.sorted { (left, right) -> Bool in
-                if left.lastName == right.lastName {
-                    return left.firstName < right.lastName
-                }
-                
-                return left.lastName < right.lastName
-            }
+        
+        let playerService = PlayerService()
+        playerService.getPlayers { (players) in
+            self.players = players
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -37,7 +32,7 @@ class PlayersTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of sections
         return 0
     }
- */
+    */
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
@@ -48,7 +43,7 @@ class PlayersTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         
         let player = players[indexPath.row]
-        cell.textLabel?.text = "\(player.firstName) \(player.lastName)"
+        cell.textLabel?.text = player.name
 
         return cell
     }

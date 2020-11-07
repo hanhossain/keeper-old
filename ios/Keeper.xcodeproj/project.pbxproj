@@ -12,9 +12,11 @@
 		59CBAEC5255666CF000D079A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59CBAEC3255666CF000D079A /* Main.storyboard */; };
 		59CBAEC7255666CF000D079A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59CBAEC6255666CF000D079A /* Assets.xcassets */; };
 		59CBAECA255666CF000D079A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59CBAEC8255666CF000D079A /* LaunchScreen.storyboard */; };
-		59CBAED52556747B000D079A /* SleeperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAED42556747B000D079A /* SleeperService.swift */; };
+		59CBAED52556747B000D079A /* SleeperClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAED42556747B000D079A /* SleeperClient.swift */; };
 		59CBAEDA255674CF000D079A /* SleeperPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAED9255674CF000D079A /* SleeperPlayer.swift */; };
 		59CBAEDD25568A7A000D079A /* PlayersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAEDC25568A7A000D079A /* PlayersTableViewController.swift */; };
+		59CBAEEB25568EFE000D079A /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAEEA25568EFE000D079A /* PlayerService.swift */; };
+		59CBAEF025568F7E000D079A /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAEEF25568F7E000D079A /* Player.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,9 +27,11 @@
 		59CBAEC6255666CF000D079A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		59CBAEC9255666CF000D079A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		59CBAECB255666CF000D079A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		59CBAED42556747B000D079A /* SleeperService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleeperService.swift; sourceTree = "<group>"; };
+		59CBAED42556747B000D079A /* SleeperClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleeperClient.swift; sourceTree = "<group>"; };
 		59CBAED9255674CF000D079A /* SleeperPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleeperPlayer.swift; sourceTree = "<group>"; };
 		59CBAEDC25568A7A000D079A /* PlayersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersTableViewController.swift; sourceTree = "<group>"; };
+		59CBAEEA25568EFE000D079A /* PlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerService.swift; sourceTree = "<group>"; };
+		59CBAEEF25568F7E000D079A /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +71,7 @@
 				59CBAEC6255666CF000D079A /* Assets.xcassets */,
 				59CBAEC8255666CF000D079A /* LaunchScreen.storyboard */,
 				59CBAECB255666CF000D079A /* Info.plist */,
+				59CBAEE925568EEF000D079A /* Players */,
 				59CBAED7255674BA000D079A /* Sleeper */,
 			);
 			path = Keeper;
@@ -75,10 +80,19 @@
 		59CBAED7255674BA000D079A /* Sleeper */ = {
 			isa = PBXGroup;
 			children = (
-				59CBAED42556747B000D079A /* SleeperService.swift */,
+				59CBAED42556747B000D079A /* SleeperClient.swift */,
 				59CBAED9255674CF000D079A /* SleeperPlayer.swift */,
 			);
 			path = Sleeper;
+			sourceTree = "<group>";
+		};
+		59CBAEE925568EEF000D079A /* Players */ = {
+			isa = PBXGroup;
+			children = (
+				59CBAEEA25568EFE000D079A /* PlayerService.swift */,
+				59CBAEEF25568F7E000D079A /* Player.swift */,
+			);
+			path = Players;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -151,9 +165,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59CBAED52556747B000D079A /* SleeperService.swift in Sources */,
+				59CBAEEB25568EFE000D079A /* PlayerService.swift in Sources */,
+				59CBAED52556747B000D079A /* SleeperClient.swift in Sources */,
 				59CBAEDA255674CF000D079A /* SleeperPlayer.swift in Sources */,
 				59CBAEDD25568A7A000D079A /* PlayersTableViewController.swift in Sources */,
+				59CBAEF025568F7E000D079A /* Player.swift in Sources */,
 				59CBAEBE255666CF000D079A /* AppDelegate.swift in Sources */,
 				59CBAEC0255666CF000D079A /* SceneDelegate.swift in Sources */,
 			);

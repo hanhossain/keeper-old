@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SleeperService {
+class SleeperClient {
     func getPlayers(completion: @escaping ([String : SleeperPlayer]) -> ()) {
         URLSession.shared.dataTask(with: URL(string: "https://api.sleeper.app/v1/players/nfl")!) { (data, res, _) in
             guard let data = data else { return }
