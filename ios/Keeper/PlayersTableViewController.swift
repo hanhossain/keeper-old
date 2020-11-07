@@ -55,8 +55,10 @@ class PlayersTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         
-        let player = players[sections[indexPath.section]]?[indexPath.row]
-        cell.textLabel?.text = player?.name
+        if let player = players[sections[indexPath.section]]?[indexPath.row] {
+            cell.textLabel?.text = player.name
+            cell.detailTextLabel?.text = "\(player.position) - \(player.team ?? "")"
+        }
 
         return cell
     }

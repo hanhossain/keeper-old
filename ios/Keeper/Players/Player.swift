@@ -10,6 +10,8 @@ import Foundation
 struct Player {
     let firstName: String
     let lastName: String
+    let position: String
+    let team: String?
     
     var name: String {
         return "\(firstName) \(lastName)"
