@@ -1,0 +1,9 @@
+platform :ios, '14.2'
+
+target 'Keeper' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for Keeper
+  pod 'SwiftSoup'
+end
