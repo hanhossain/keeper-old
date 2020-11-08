@@ -10,7 +10,14 @@ import Foundation
 class PlayerService {
     let sleeper = SleeperClient()
     
+    var players: [Player]?
+    
     func getPlayers(completion: @escaping ([Player]) -> ()) {
+        if let players = players {
+            completion(players)
+            return
+        }
+        
         sleeper.getPlayers { (players) in
             let validPositions: Set = ["QB", "RB", "WR", "TE", "K", "DEF"]
             
@@ -25,6 +32,7 @@ class PlayerService {
                     return left.lastName < right.lastName
                 }
             
+            self.players = players
             completion(players)
         }
     }
