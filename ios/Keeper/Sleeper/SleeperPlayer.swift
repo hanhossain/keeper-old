@@ -8,14 +8,14 @@
 import Foundation
 
 struct SleeperPlayer: Decodable {
-    var firstName: String
-    var lastName: String
-    var fullName: String?
-    var position: String?
-    var positions: [String]?
-    var active: Bool
-    var team: String?
-    var status: String?
+    let firstName: String
+    let lastName: String
+    let fullName: String?
+    let position: String?
+    let positions: [String]?
+    let active: Bool
+    let team: String?
+    let status: String?
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"

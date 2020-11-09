@@ -45,6 +45,8 @@ class PlayersTableViewController: UITableViewController {
                 self.tableView.reloadData()
             }
         }
+        
+        playerService.getStatistics()
     }
     
     func getPlayersAndSections(from originalPlayers: [Player]) -> (players: [Character : [Player]], sections: [Character]) {

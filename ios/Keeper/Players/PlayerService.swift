@@ -9,6 +9,7 @@ import Foundation
 
 class PlayerService {
     let sleeper = SleeperClient()
+    let nfl = NFLClient()
     
     var players: [Player]?
     
@@ -34,6 +35,14 @@ class PlayerService {
             
             self.players = players
             completion(players)
+        }
+    }
+    
+    func getStatistics() {
+        guard let url = URL(string: "https://fantasy.nfl.com/research/players?position=1&statCategory=stats&statSeason=2020&statType=weekStats&statWeek=5")
+            else { return }
+        nfl.getHTML(url: url) { (raw) in
+//            print(raw)
         }
     }
 }
