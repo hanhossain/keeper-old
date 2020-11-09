@@ -16,8 +16,9 @@ class NFLClient {
             
             guard let string = String(data: data, encoding: .utf8) else { return }
             if let players = self.parse(string) {
-                if let player = players.first?.statistics {
-                    print(player)
+                if let player = players.first {
+                    print(player.name)
+                    print(player.statistics)
                 }
                 completion(string)
             }

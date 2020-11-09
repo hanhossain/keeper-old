@@ -12,6 +12,8 @@
 		595EFA0B2558F9D700D56AF8 /* NFLStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595EFA0A2558F9D700D56AF8 /* NFLStatistics.swift */; };
 		595EFA0E2558FA2800D56AF8 /* NFLOffenseStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595EFA0D2558FA2800D56AF8 /* NFLOffenseStatistics.swift */; };
 		595EFA112558FA4D00D56AF8 /* NFLPassingStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595EFA102558FA4D00D56AF8 /* NFLPassingStatistics.swift */; };
+		595EFA142559146800D56AF8 /* NFLRushingStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595EFA132559146800D56AF8 /* NFLRushingStatistics.swift */; };
+		595EFA172559157A00D56AF8 /* NFLReceivingStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595EFA162559157A00D56AF8 /* NFLReceivingStatistics.swift */; };
 		59CBAEBE255666CF000D079A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAEBD255666CF000D079A /* AppDelegate.swift */; };
 		59CBAEC0255666CF000D079A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CBAEBF255666CF000D079A /* SceneDelegate.swift */; };
 		59CBAEC5255666CF000D079A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59CBAEC3255666CF000D079A /* Main.storyboard */; };
@@ -31,6 +33,8 @@
 		595EFA0A2558F9D700D56AF8 /* NFLStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFLStatistics.swift; sourceTree = "<group>"; };
 		595EFA0D2558FA2800D56AF8 /* NFLOffenseStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFLOffenseStatistics.swift; sourceTree = "<group>"; };
 		595EFA102558FA4D00D56AF8 /* NFLPassingStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFLPassingStatistics.swift; sourceTree = "<group>"; };
+		595EFA132559146800D56AF8 /* NFLRushingStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFLRushingStatistics.swift; sourceTree = "<group>"; };
+		595EFA162559157A00D56AF8 /* NFLReceivingStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFLReceivingStatistics.swift; sourceTree = "<group>"; };
 		59CBAEBA255666CF000D079A /* Keeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59CBAEBD255666CF000D079A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		59CBAEBF255666CF000D079A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -132,7 +136,9 @@
 				595EFA072558F99000D56AF8 /* NFLGameInfo.swift */,
 				595EFA0A2558F9D700D56AF8 /* NFLStatistics.swift */,
 				595EFA0D2558FA2800D56AF8 /* NFLOffenseStatistics.swift */,
+				595EFA162559157A00D56AF8 /* NFLReceivingStatistics.swift */,
 				595EFA102558FA4D00D56AF8 /* NFLPassingStatistics.swift */,
+				595EFA132559146800D56AF8 /* NFLRushingStatistics.swift */,
 			);
 			path = NFL;
 			sourceTree = "<group>";
@@ -261,6 +267,7 @@
 			files = (
 				59E494A82557F03B00AA8FFD /* NFLPlayer.swift in Sources */,
 				595EFA0B2558F9D700D56AF8 /* NFLStatistics.swift in Sources */,
+				595EFA142559146800D56AF8 /* NFLRushingStatistics.swift in Sources */,
 				595EFA112558FA4D00D56AF8 /* NFLPassingStatistics.swift in Sources */,
 				59CBAEEB25568EFE000D079A /* PlayerService.swift in Sources */,
 				59E494A42557DD3B00AA8FFD /* NFLClient.swift in Sources */,
@@ -269,6 +276,7 @@
 				59CBAEDA255674CF000D079A /* SleeperPlayer.swift in Sources */,
 				59CBAEDD25568A7A000D079A /* PlayersTableViewController.swift in Sources */,
 				59CBAEF025568F7E000D079A /* Player.swift in Sources */,
+				595EFA172559157A00D56AF8 /* NFLReceivingStatistics.swift in Sources */,
 				59CBAEBE255666CF000D079A /* AppDelegate.swift in Sources */,
 				595EFA0E2558FA2800D56AF8 /* NFLOffenseStatistics.swift in Sources */,
 				59CBAEC0255666CF000D079A /* SceneDelegate.swift in Sources */,

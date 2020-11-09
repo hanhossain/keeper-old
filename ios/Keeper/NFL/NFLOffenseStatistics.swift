@@ -9,10 +9,18 @@ import Foundation
 import SwiftSoup
 
 struct NFLOffenseStatistics {
-    let passingStatistics: NFLPassingStatistics
+    let passing: NFLPassingStatistics
+    let rushing: NFLRushingStatistics
+    let receiving: NFLReceivingStatistics
     
     init?(from row: Element) {
         guard let passing = NFLPassingStatistics(from: row) else { return nil }
-        passingStatistics = passing
+        self.passing = passing
+        
+        guard let rushing = NFLRushingStatistics(from: row) else { return nil }
+        self.rushing = rushing
+        
+        guard let receiving = NFLReceivingStatistics(from: row) else { return nil }
+        self.receiving = receiving
     }
 }

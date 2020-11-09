@@ -26,7 +26,7 @@ struct NFLPassingStatistics {
             touchdowns = nil
         }
         
-        if let interceptions = try? row.select(".statId-6").text() {
+        if let interceptions = try? row.select(".statId-7").text() {
             self.interceptions = Int(interceptions)
         } else {
             interceptions = nil
