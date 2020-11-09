@@ -12,7 +12,7 @@ struct NFLRushingStatistics {
     let yards: Int?
     let touchdowns: Int?
     
-    init?(from row: Element) {
+    init(from row: Element) {
         if let yards = try? row.select(".statId-14").text() {
             self.yards = Int(yards)
         } else {

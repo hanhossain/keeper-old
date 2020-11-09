@@ -14,8 +14,7 @@ enum NFLStatistics {
     init?(from row: Element, position: String) {
         switch position {
         case "QB", "RB", "WR", "TE":
-            guard let statistics = NFLOffenseStatistics(from: row) else { return nil }
-            self = .offense(statistics)
+            self = .offense(NFLOffenseStatistics(from: row))
         default:
             return nil
         }

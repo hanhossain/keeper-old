@@ -12,15 +12,12 @@ struct NFLOffenseStatistics {
     let passing: NFLPassingStatistics
     let rushing: NFLRushingStatistics
     let receiving: NFLReceivingStatistics
+    let returning: NFLReturningStatistics
     
-    init?(from row: Element) {
-        guard let passing = NFLPassingStatistics(from: row) else { return nil }
-        self.passing = passing
-        
-        guard let rushing = NFLRushingStatistics(from: row) else { return nil }
-        self.rushing = rushing
-        
-        guard let receiving = NFLReceivingStatistics(from: row) else { return nil }
-        self.receiving = receiving
+    init(from row: Element) {
+        passing = NFLPassingStatistics(from: row)
+        rushing = NFLRushingStatistics(from: row)
+        receiving = NFLReceivingStatistics(from: row)
+        returning = NFLReturningStatistics(from: row)
     }
 }
