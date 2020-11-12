@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp;
 
-namespace Keeper.Core
+namespace Keeper.Core.Nfl
 {
     public class FantasyClient
     {

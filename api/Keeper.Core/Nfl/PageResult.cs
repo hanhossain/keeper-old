@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Keeper.Core
+namespace Keeper.Core.Nfl
 {
     public class PageResult<T>
     {

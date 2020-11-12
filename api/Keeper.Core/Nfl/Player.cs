@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using AngleSharp.Dom;
-using Keeper.Core.Statistics;
+using Keeper.Core.Nfl.Statistics;
 
-namespace Keeper.Core
+namespace Keeper.Core.Nfl
 {
     public class Player
     {
