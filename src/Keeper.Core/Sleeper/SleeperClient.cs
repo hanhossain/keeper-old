@@ -14,8 +14,11 @@ namespace Keeper.Core.Sleeper
         {
             using var response = await _client.GetAsync("https://api.sleeper.app/v1/players/nfl");
             response.EnsureSuccessStatusCode();
+
             await using var stream = await response.Content.ReadAsStreamAsync();
-            return await JsonSerializer.DeserializeAsync<Dictionary<string, SleeperPlayer>>(stream);
+
+            var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            return await JsonSerializer.DeserializeAsync<Dictionary<string, SleeperPlayer>>(stream, options);
         }
 
         public void Dispose()

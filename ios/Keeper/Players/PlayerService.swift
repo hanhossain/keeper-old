@@ -27,7 +27,7 @@ class PlayerService {
                 .map({ Player(firstName: $0.firstName, lastName: $0.lastName, position: $0.position!, team: $0.team) })
                 .sorted { (left, right) -> Bool in
                     if left.lastName == right.lastName {
-                        return left.firstName < right.lastName
+                        return left.firstName < right.firstName
                     }
 
                     return left.lastName < right.lastName

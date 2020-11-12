@@ -2,6 +2,9 @@
 using Keeper.iOS.Extensions;
 using Foundation;
 using UIKit;
+using System.Collections.Generic;
+using Keeper.Core.Models;
+using Keeper.Core.Services;
 
 namespace Keeper.iOS
 {
@@ -9,22 +12,31 @@ namespace Keeper.iOS
     {
         private const string CellId = "playerCell";
 
-        public override void ViewDidLoad()
+        private readonly PlayerService _playerService = new PlayerService();
+
+        private List<Player> _players = new List<Player>();
+
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
             TableView.RegisterClassForCellReuse<UITableViewCell>(CellId);
+
+            _players = await _playerService.GetPlayersAsync();
+
+            TableView.ReloadData();
         }
 
         public override nint RowsInSection(UITableView tableView, nint section)
         {
-            return 1;
+            return _players.Count;
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             var cell = tableView.DequeueReusableCell(CellId, indexPath);
 
-            cell.TextLabel.Text = "Hello world";
+            var player = _players[indexPath.Row];
+            cell.TextLabel.Text = player.Name;
 
             return cell;
         }
