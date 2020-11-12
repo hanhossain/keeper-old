@@ -1,5 +1,4 @@
-﻿using System;
-using Foundation;
+﻿using Foundation;
 using UIKit;
 
 namespace Keeper.iOS
@@ -21,7 +20,7 @@ namespace Keeper.iOS
             {
                 Window = new UIWindow(windowScene)
                 {
-                    RootViewController = new UINavigationController(new ViewController())
+                    RootViewController = new UINavigationController(new PlayersListController())
                 };
                 Window.MakeKeyAndVisible();
             }
