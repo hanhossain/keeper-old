@@ -124,6 +124,8 @@
     <ItemGroup>
         <Folder Include="Resources\" />
         <Folder Include="Extensions\" />
+        <Folder Include="Controllers\" />
+        <Folder Include="Views\" />
     </ItemGroup>
     <ItemGroup>
         <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -136,8 +138,9 @@
         <Compile Include="Main.cs" />
         <Compile Include="AppDelegate.cs" />
         <Compile Include="SceneDelegate.cs" />
-        <Compile Include="PlayersListController.cs" />
         <Compile Include="Extensions\UITableViewExtensions.cs" />
+        <Compile Include="Controllers\PlayersListController.cs" />
+        <Compile Include="Views\SubtitleTableViewCell.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Keeper.Core\Keeper.Core.csproj">

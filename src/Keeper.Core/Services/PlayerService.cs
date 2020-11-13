@@ -30,7 +30,9 @@ namespace Keeper.Core.Services
                     .Select(x => new Player()
                     {
                         FirstName = x.FirstName,
-                        LastName = x.LastName
+                        LastName = x.LastName,
+                        Position = x.Position,
+                        Team = x.Team
                     })
                     .ToList();
             }

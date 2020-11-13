@@ -6,9 +6,10 @@ using Foundation;
 using Keeper.Core.Models;
 using Keeper.Core.Services;
 using Keeper.iOS.Extensions;
+using Keeper.iOS.Views;
 using UIKit;
 
-namespace Keeper.iOS
+namespace Keeper.iOS.Controllers
 {
     public class PlayersListController : UITableViewController, IUISearchResultsUpdating
     {
@@ -32,7 +33,7 @@ namespace Keeper.iOS
         {
             base.ViewDidLoad();
             Title = "Players";
-            TableView.RegisterClassForCellReuse<UITableViewCell>(CellId);
+            TableView.RegisterClassForCellReuse<SubtitleTableViewCell>(CellId);
 
             // setup search controller
             _searchController.SearchResultsUpdater = this;
@@ -80,6 +81,7 @@ namespace Keeper.iOS
             var player = players[section][indexPath.Row];
 
             cell.TextLabel.Text = player.Name;
+            cell.DetailTextLabel.Text = player.PositionAndTeam;
 
             return cell;
         }

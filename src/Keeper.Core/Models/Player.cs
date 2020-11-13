@@ -7,6 +7,12 @@ namespace Keeper.Core.Models
 
         public string LastName { get; set; }
 
+        public string Position { get; set; }
+
+        public string Team { get; set; }
+
         public string Name => $"{FirstName} {LastName}";
+
+        public string PositionAndTeam => $"{Position} - {Team}";
     }
 }
