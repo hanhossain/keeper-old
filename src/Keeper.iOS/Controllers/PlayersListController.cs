@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
 using Keeper.Core.Models;
+using Keeper.Core.Nfl;
 using Keeper.Core.Services;
 using Keeper.iOS.Extensions;
 using Keeper.iOS.Views;
@@ -44,6 +45,10 @@ namespace Keeper.iOS.Controllers
             (_players, _sections) = GetPlayersAndSections(players);
 
             TableView.ReloadData();
+
+            using var fantasyClient = new FantasyClient();
+            var offense = await fantasyClient.GetAsync(2020, NflPosition.Defense);
+            Console.WriteLine("done");
         }
 
         #region Table View Data Source

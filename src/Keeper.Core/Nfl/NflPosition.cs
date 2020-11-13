@@ -1,6 +1,6 @@
 namespace Keeper.Core.Nfl
 {
-    public enum Position
+    public enum NflPosition
     {
         Offense = 0,
         Quarterback = 1,

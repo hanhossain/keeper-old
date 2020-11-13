@@ -1,11 +1,11 @@
 ﻿namespace Keeper.Core.Nfl
 {
-    public class Team
+    public class NflTeam
     {
         public string Name { get; set; }
 
         public string Opponent { get; set; }
 
-        public Location Location { get; set; }
+        public NflLocation Location { get; set; }
     }
 }

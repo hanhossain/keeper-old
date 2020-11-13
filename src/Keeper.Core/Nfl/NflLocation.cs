@@ -1,6 +1,6 @@
 ﻿namespace Keeper.Core.Nfl
 {
-    public enum Location
+    public enum NflLocation
     {
         Home,
         Away

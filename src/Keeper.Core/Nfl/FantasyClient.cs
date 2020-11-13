@@ -7,17 +7,12 @@ using AngleSharp;
 
 namespace Keeper.Core.Nfl
 {
-    public class FantasyClient
+    public class FantasyClient : IDisposable
     {
         private const int PageSize = 25;
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = new HttpClient();
 
-        public FantasyClient(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
-        public async Task<PageResult<Player>> GetAsync(int season, int week, int offset, Position? position = null)
+        public async Task<NflPageResult> GetAsync(int season, int week, int offset, NflPosition? position = null)
         {
             string positionQuery = position != null ? $"&position={(int)position}" : string.Empty;
             
@@ -38,24 +33,31 @@ namespace Keeper.Core.Nfl
             var totalCount = int.Parse(rawTotalCount);
             
             var tableBody = document.QuerySelector("table tbody");
-
+            tableBody = null;
             var players = tableBody?
                 .QuerySelectorAll("tr")
-                .Select(x => new Player(x))
-                .ToList() ?? new List<Player>();
+                .Select(x => new NflPlayer(x))
+                .ToList() ?? new List<NflPlayer>();
 
-            return new PageResult<Player>()
+            var weeks = document
+                .QuerySelectorAll(".ww")
+                .Count();
+
+            return new NflPageResult()
             {
+                Season = season,
+                Week = week,
                 TotalCount = totalCount,
-                Values = players
+                Values = players,
+                Weeks = weeks
             };
         }
 
-        public async Task<List<Player>> GetAsync(int season, int week, Position? position = null)
+        public async Task<List<NflPageResult>> GetAsync(int season, int week, NflPosition? position = null)
         {
             var week1Results = await GetAsync(season, week, 1, position);
 
-            var tasks = new List<Task<PageResult<Player>>>();
+            var tasks = new List<Task<NflPageResult>>();
             
             for (int i = PageSize + 1; i <= week1Results.TotalCount; i += PageSize)
             {
@@ -64,16 +66,46 @@ namespace Keeper.Core.Nfl
             }
 
             var results = await Task.WhenAll(tasks);
-            var players = new List<Player>();
+            var players = new List<NflPageResult>() { week1Results };
 
-            players.AddRange(week1Results.Values);
-
-            foreach (var weekResults in results)
-            {
-                players.AddRange(weekResults.Values);
-            }
+            players.AddRange(results);
 
             return players;
+        }
+
+        public async Task<List<NflResult>> GetAsync(int season, NflPosition? position = null)
+        {
+            var week1Results = await GetAsync(season, 1, position);
+            var weeks = week1Results.Select(x => x.Weeks).FirstOrDefault();
+
+            var tasks = new List<Task<List<NflPageResult>>>();
+            for (int i = 2; i <= weeks; i++)
+            {
+                tasks.Add(GetAsync(season, i, position));
+            }
+
+            var seasonResults = (await Task.WhenAll(tasks)).ToList();
+            seasonResults.Insert(0, week1Results);
+
+            var results = seasonResults
+                .SelectMany(weekResults => weekResults)
+                .GroupBy(
+                    pageResult => pageResult.Week,
+                    pageResult => pageResult.Values,
+                    (week, players) => new NflResult()
+                    {
+                        Season = season,
+                        Week = week,
+                        Values = players.SelectMany(x => x).ToList()
+                    })
+                .ToList();
+
+            return results;
+        }
+
+        public void Dispose()
+        {
+            _httpClient.Dispose();
         }
     }
 }
