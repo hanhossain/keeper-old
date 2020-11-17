@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keeper.Core.Delegates;
 using Keeper.Core.Models;
 using Keeper.Core.Nfl;
 using Keeper.Core.Nfl.Statistics;
@@ -20,19 +20,21 @@ namespace Keeper.Core.Services
 
         private bool _loaded = false;
 
-        public async Task<List<Player>> GetPlayersAsync()
+        public async Task<List<Player>> GetPlayersAsync(IProgressDelegate progressDelegate)
         {
-            await LoadAsync();
+            await LoadAsync(progressDelegate);
 
             return _players.Values.OrderBy(x => x.Name).ToList();
         }
 
-        public async Task LoadAsync()
+        public async Task LoadAsync(IProgressDelegate progressDelegate)
         {
             using var lease = await _lock.LockAsync();
             
             if (!_loaded)
             {
+                progressDelegate.ShowProgressIndicator();
+
                 using var sleeperClient = new SleeperClient();
                 using var fantasyClient = new FantasyClient();
 
@@ -88,6 +90,7 @@ namespace Keeper.Core.Services
                 }
 
                 _loaded = true;
+                progressDelegate.DismissProgressIndicator();
             }
         }
     }

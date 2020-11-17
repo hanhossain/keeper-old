@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using AngleSharp.Dom;
 using Keeper.Core.Nfl.Statistics;

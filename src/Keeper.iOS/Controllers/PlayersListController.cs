@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreGraphics;
 using Foundation;
+using Keeper.Core.Delegates;
 using Keeper.Core.Models;
 using Keeper.Core.Services;
-using Keeper.Core.Sleeper;
 using Keeper.iOS.Extensions;
 using Keeper.iOS.Views;
 using UIKit;
 
 namespace Keeper.iOS.Controllers
 {
-    public class PlayersListController : UITableViewController, IUISearchResultsUpdating
+    public class PlayersListController : UITableViewController, IUISearchResultsUpdating, IProgressDelegate
     {
         private const string CellId = "playerCell";
 
@@ -27,6 +28,8 @@ namespace Keeper.iOS.Controllers
         private Dictionary<char, List<Player>> _filteredPlayers = new Dictionary<char, List<Player>>();
         private List<char> _sections = new List<char>();
         private List<char> _filteredSections = new List<char>();
+        private UIProgressView _progressView;
+        private UIAlertController _alertController;
 
         public bool IsFiltering => _searchController.Active && !string.IsNullOrWhiteSpace(_searchController.SearchBar.Text);
 
@@ -41,12 +44,8 @@ namespace Keeper.iOS.Controllers
             NavigationItem.SearchController = _searchController;
             DefinesPresentationContext = true;
 
-            var players = await _playerService.GetPlayersAsync();
+            var players = await _playerService.GetPlayersAsync(this);
             (_players, _sections) = GetPlayersAndSections(players);
-
-            using var sleeper = new SleeperClient();
-            var res = await sleeper.GetPlayersAsync();
-            var cards = res.Values.Where(x => x.FirstName.Contains("Cardinals") || x.LastName.Contains("Cardinals")).ToList();
 
             TableView.ReloadData();
         }
@@ -113,6 +112,36 @@ namespace Keeper.iOS.Controllers
 
         #endregion
 
+        #region IProgressDelegate
+
+        public void ShowProgressIndicator()
+        {
+            InvokeOnMainThread(() =>
+            {
+                _alertController = UIAlertController.Create("Loading...", null, UIAlertControllerStyle.Alert);
+                PresentViewController(_alertController, true, () =>
+                {
+                    var margin = 8.0;
+                    var rect = new CGRect(margin, _alertController.View.Frame.Height + margin, _alertController.View.Frame.Width - margin * 2.0, 2.0);
+
+                    _progressView = new UIProgressView(rect)
+                    {
+                        Progress = 0.5f,
+                        TintColor = View.TintColor
+                    };
+
+                    _alertController.View.AddSubview(_progressView);
+                });
+            });
+        }
+
+        public void DismissProgressIndicator()
+        {
+            InvokeOnMainThread(() => _alertController.DismissViewController(true, null));
+        }
+
+        #endregion
+
         #region Private Methods
 
         private (Dictionary<char, List<Player>>, List<char>) GetPlayersAndSections(IEnumerable<Player> originalPlayers)
@@ -147,7 +176,7 @@ namespace Keeper.iOS.Controllers
 
         private async Task FilterPlayersAsync(string query)
         {
-            var players = await _playerService.GetPlayersAsync();
+            var players = await _playerService.GetPlayersAsync(this);
             var filtered = players.Where(x => x.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
 
             (_filteredPlayers, _filteredSections) = GetPlayersAndSections(filtered);
