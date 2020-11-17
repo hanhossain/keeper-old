@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
-using Keeper.Core.Delegates;
+using Keeper.Core.Progress;
 using Keeper.Core.Models;
 using Keeper.Core.Services;
 using Keeper.iOS.Extensions;

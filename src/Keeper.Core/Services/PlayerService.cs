@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Keeper.Core.Delegates;
+using Keeper.Core.Progress;
 using Keeper.Core.Models;
 using Keeper.Core.Nfl;
 using Keeper.Core.Nfl.Statistics;
@@ -33,8 +33,7 @@ namespace Keeper.Core.Services
             
             if (!_loaded)
             {
-                progressDelegate.ShowProgressIndicator();
-
+                using var progressIndicator = new ProgressIndicator(progressDelegate);
                 using var sleeperClient = new SleeperClient();
                 using var fantasyClient = new FantasyClient();
 
@@ -117,7 +116,6 @@ namespace Keeper.Core.Services
                 }
 
                 _loaded = true;
-                progressDelegate.DismissProgressIndicator();
             }
         }
     }

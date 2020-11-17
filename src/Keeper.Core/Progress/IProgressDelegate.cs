@@ -1,4 +1,4 @@
-﻿namespace Keeper.Core.Delegates
+﻿namespace Keeper.Core.Progress
 {
     public interface IProgressDelegate
     {
