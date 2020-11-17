@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreGraphics;
 using Foundation;
 using Keeper.Core.Delegates;
 using Keeper.Core.Models;
@@ -119,19 +118,22 @@ namespace Keeper.iOS.Controllers
             InvokeOnMainThread(() =>
             {
                 _alertController = UIAlertController.Create("Loading...", null, UIAlertControllerStyle.Alert);
-                PresentViewController(_alertController, true, () =>
+                _progressView = new UIProgressView()
                 {
-                    var margin = 8.0;
-                    var rect = new CGRect(margin, _alertController.View.Frame.Height + margin, _alertController.View.Frame.Width - margin * 2.0, 2.0);
+                    Progress = 0.5f,
+                    TintColor = View.TintColor,
+                    TranslatesAutoresizingMaskIntoConstraints = false
+                };
 
-                    _progressView = new UIProgressView(rect)
-                    {
-                        Progress = 0.5f,
-                        TintColor = View.TintColor
-                    };
+                _alertController.View.AddSubview(_progressView);
 
-                    _alertController.View.AddSubview(_progressView);
-                });
+                _progressView.TopAnchor.ConstraintEqualTo(_alertController.View.BottomAnchor, 8).Active = true;
+                _progressView.LeadingAnchor.ConstraintEqualTo(_alertController.View.LeadingAnchor).Active = true;
+                _progressView.TrailingAnchor.ConstraintEqualTo(_alertController.View.TrailingAnchor).Active = true;
+                _progressView.HeightAnchor.ConstraintEqualTo(2).Active = true;
+                
+                
+                PresentViewController(_alertController, true, null);
             });
         }
 
