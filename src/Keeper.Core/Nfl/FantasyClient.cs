@@ -33,7 +33,7 @@ namespace Keeper.Core.Nfl
             var totalCount = int.Parse(rawTotalCount);
             
             var tableBody = document.QuerySelector("table tbody");
-            tableBody = null;
+
             var players = tableBody?
                 .QuerySelectorAll("tr")
                 .Select(x => new NflPlayer(x))

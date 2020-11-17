@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
 using Keeper.Core.Models;
-using Keeper.Core.Nfl;
 using Keeper.Core.Services;
+using Keeper.Core.Sleeper;
 using Keeper.iOS.Extensions;
 using Keeper.iOS.Views;
 using UIKit;
@@ -44,11 +44,11 @@ namespace Keeper.iOS.Controllers
             var players = await _playerService.GetPlayersAsync();
             (_players, _sections) = GetPlayersAndSections(players);
 
-            TableView.ReloadData();
+            using var sleeper = new SleeperClient();
+            var res = await sleeper.GetPlayersAsync();
+            var cards = res.Values.Where(x => x.FirstName.Contains("Cardinals") || x.LastName.Contains("Cardinals")).ToList();
 
-            using var fantasyClient = new FantasyClient();
-            var offense = await fantasyClient.GetAsync(2020, NflPosition.Defense);
-            Console.WriteLine("done");
+            TableView.ReloadData();
         }
 
         #region Table View Data Source
@@ -91,6 +91,15 @@ namespace Keeper.iOS.Controllers
             return cell;
         }
 
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+            var (players, sections) = IsFiltering ? (_filteredPlayers, _filteredSections) : (_players, _sections);
+            var section = sections[indexPath.Section];
+            var player = players[section][indexPath.Row];
+            Console.WriteLine(player.Name);
+            tableView.DeselectRow(indexPath, true);
+        }
+
         #endregion
 
         #region IUISearchResultsUpdating
@@ -113,7 +122,7 @@ namespace Keeper.iOS.Controllers
 
             foreach (var player in originalPlayers)
             {
-                var firstLetter = char.ToUpper(player.LastName.First());
+                var firstLetter = char.ToUpper(player.Name.First());
                 if (firstLetter >= '0' && firstLetter <= '9')
                 {
                     firstLetter = '#';

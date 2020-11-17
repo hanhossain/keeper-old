@@ -5,6 +5,9 @@ namespace Keeper.Core.Sleeper
 {
     public class SleeperPlayer
     {
+        [JsonPropertyName("player_id")]
+        public string PlayerId { get; set; }
+
         [JsonPropertyName("first_name")]
         public string FirstName { get; set; }
 
