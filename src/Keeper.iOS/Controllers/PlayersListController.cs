@@ -43,7 +43,7 @@ namespace Keeper.iOS.Controllers
             NavigationItem.SearchController = _searchController;
             DefinesPresentationContext = true;
 
-            var players = await _playerService.GetPlayersAsync(this);
+            var players = await Task.Run(() => _playerService.GetPlayersAsync(this));
             (_players, _sections) = GetPlayersAndSections(players);
 
             TableView.ReloadData();
@@ -120,7 +120,6 @@ namespace Keeper.iOS.Controllers
                 _alertController = UIAlertController.Create("Loading...", null, UIAlertControllerStyle.Alert);
                 _progressView = new UIProgressView()
                 {
-                    Progress = 0.5f,
                     TintColor = View.TintColor,
                     TranslatesAutoresizingMaskIntoConstraints = false
                 };
@@ -140,6 +139,11 @@ namespace Keeper.iOS.Controllers
         public void DismissProgressIndicator()
         {
             InvokeOnMainThread(() => _alertController.DismissViewController(true, null));
+        }
+
+        public void UpdateProgress(float progress)
+        {
+            InvokeOnMainThread(() => _progressView.SetProgress(progress, true));
         }
 
         #endregion

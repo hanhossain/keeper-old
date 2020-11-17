@@ -5,5 +5,7 @@
         void ShowProgressIndicator();
 
         void DismissProgressIndicator();
+
+        void UpdateProgress(float progress);
     }
 }

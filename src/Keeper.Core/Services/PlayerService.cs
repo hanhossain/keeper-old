@@ -38,19 +38,46 @@ namespace Keeper.Core.Services
                 using var sleeperClient = new SleeperClient();
                 using var fantasyClient = new FantasyClient();
 
-                var sleeperTask = sleeperClient.GetPlayersAsync();
+                int finishedCount = 0;
+                int totalParallelTasks = 7;
+                var innerLock = new AsyncLock();
+
+                async Task<Dictionary<string, SleeperPlayer>> GetPlayersAsync()
+                {
+                    using var sleeperClient = new SleeperClient();
+                    var result = await sleeperClient.GetPlayersAsync();
+
+                    using var innerLease = await innerLock.LockAsync();
+                    finishedCount++;
+
+                    progressDelegate.UpdateProgress((float)finishedCount / totalParallelTasks);
+
+                    return result;
+                }
+
+                async Task<List<NflResult>> GetStatisticsAsync(NflPosition position)
+                {
+                    var result = await fantasyClient.GetAsync(Season, position);
+                    using var innerLease = await innerLock.LockAsync();
+                    finishedCount++;
+
+                    progressDelegate.UpdateProgress((float)finishedCount / totalParallelTasks);
+
+                    return result;
+                }
 
                 // get all statistics
                 var tasks = new List<Task<List<NflResult>>>()
                 {
-                    fantasyClient.GetAsync(Season, NflPosition.Quarterback),
-                    fantasyClient.GetAsync(Season, NflPosition.RunningBack),
-                    fantasyClient.GetAsync(Season, NflPosition.WideReceiver),
-                    fantasyClient.GetAsync(Season, NflPosition.TightEnd),
-                    fantasyClient.GetAsync(Season, NflPosition.Kicker),
-                    fantasyClient.GetAsync(Season, NflPosition.Defense)
+                    GetStatisticsAsync(NflPosition.Quarterback),
+                    GetStatisticsAsync(NflPosition.RunningBack),
+                    GetStatisticsAsync(NflPosition.WideReceiver),
+                    GetStatisticsAsync(NflPosition.TightEnd),
+                    GetStatisticsAsync(NflPosition.Kicker),
+                    GetStatisticsAsync(NflPosition.Defense)
                 };
 
+                var sleeperTask = GetPlayersAsync();
                 var results = await Task.WhenAll(tasks);
                 var players = await sleeperTask;
 
