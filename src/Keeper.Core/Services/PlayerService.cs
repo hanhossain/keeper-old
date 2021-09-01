@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Keeper.Core.Progress;
 using Keeper.Core.Models;
 using Keeper.Core.Nfl;
 using Keeper.Core.Nfl.Statistics;
@@ -20,25 +19,22 @@ namespace Keeper.Core.Services
 
         private bool _loaded = false;
 
-        public async Task<List<Player>> GetPlayersAsync(IProgressDelegate progressDelegate)
+        public async Task<List<Player>> GetPlayersAsync()
         {
-            await LoadAsync(progressDelegate);
+            await LoadAsync();
 
             return _players.Values.OrderBy(x => x.Name).ToList();
         }
 
-        public async Task LoadAsync(IProgressDelegate progressDelegate)
+        public async Task LoadAsync()
         {
             using var lease = await _lock.LockAsync();
             
             if (!_loaded)
             {
-                using var progressIndicator = new ProgressIndicator(progressDelegate);
                 using var sleeperClient = new SleeperClient();
                 using var fantasyClient = new FantasyClient();
 
-                int finishedCount = 0;
-                int totalParallelTasks = 7;
                 var innerLock = new AsyncLock();
 
                 async Task<Dictionary<string, SleeperPlayer>> GetPlayersAsync()
@@ -47,9 +43,6 @@ namespace Keeper.Core.Services
                     var result = await sleeperClient.GetPlayersAsync();
 
                     using var innerLease = await innerLock.LockAsync();
-                    finishedCount++;
-
-                    progressDelegate.UpdateProgress((float)finishedCount / totalParallelTasks);
 
                     return result;
                 }
@@ -58,9 +51,6 @@ namespace Keeper.Core.Services
                 {
                     var result = await fantasyClient.GetAsync(Season, position);
                     using var innerLease = await innerLock.LockAsync();
-                    finishedCount++;
-
-                    progressDelegate.UpdateProgress((float)finishedCount / totalParallelTasks);
 
                     return result;
                 }
