@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keeper.Core.Models;
@@ -10,29 +9,30 @@ using Nito.AsyncEx;
 
 namespace Keeper.Core.Services
 {
-    public class PlayerService : IPlayerService, IDisposable
+    public class PlayerService : IPlayerService
     {
         private const int Season = 2020;
 
         private readonly AsyncLock _lock = new AsyncLock();
         private readonly Dictionary<int, Dictionary<int, PlayerStatistics>> _playerStatistics = new Dictionary<int, Dictionary<int, PlayerStatistics>>();
         private readonly Dictionary<int, Player> _players = new Dictionary<int, Player>();
-        private readonly SleeperClient _sleeperClient = new SleeperClient();
-        private readonly FantasyClient _fantasyClient = new FantasyClient();
+        
+        private readonly ISleeperClient _sleeperClient;
+        private readonly IFantasyClient _fantasyClient;
         
         private bool _loaded;
+
+        public PlayerService(ISleeperClient sleeperClient, IFantasyClient fantasyClient)
+        {
+            _sleeperClient = sleeperClient;
+            _fantasyClient = fantasyClient;
+        }
 
         public async Task<List<Player>> GetPlayersAsync()
         {
             await LoadAsync();
 
             return _players.Values.OrderBy(x => x.Name).ToList();
-        }
-        
-        public void Dispose()
-        {
-            _sleeperClient.Dispose();
-            _fantasyClient.Dispose();
         }
 
         private async Task LoadAsync()

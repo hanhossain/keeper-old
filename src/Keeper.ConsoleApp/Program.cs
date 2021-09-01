@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Keeper.Core.Nfl;
 using Keeper.Core.Services;
+using Keeper.Core.Sleeper;
 
 namespace Keeper.ConsoleApp
 {
@@ -12,7 +15,10 @@ namespace Keeper.ConsoleApp
         {
             Console.WriteLine("Hello World!");
 
-            var playerService = new PlayerService();
+            using var httpClient = new HttpClient();
+            var sleeperClient = new SleeperClient(httpClient);
+            var fantasyClient = new FantasyClient(httpClient);
+            var playerService = new PlayerService(sleeperClient, fantasyClient);
             var players = await playerService.GetPlayersAsync();
             Console.WriteLine($"{players.Count} players");
 

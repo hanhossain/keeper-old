@@ -7,10 +7,15 @@ using AngleSharp;
 
 namespace Keeper.Core.Nfl
 {
-    public class FantasyClient : IFantasyClient, IDisposable
+    public class FantasyClient : IFantasyClient
     {
         private const int PageSize = 25;
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient;
+
+        public FantasyClient(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
 
         public async Task<NflPageResult> GetAsync(int season, int week, int offset, NflPosition? position = null)
         {
@@ -101,11 +106,6 @@ namespace Keeper.Core.Nfl
                 .ToList();
 
             return results;
-        }
-
-        public void Dispose()
-        {
-            _httpClient.Dispose();
         }
     }
 }

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Keeper.Core.Nfl;
 using Keeper.Core.Services;
+using Keeper.Core.Sleeper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 
 namespace Keeper.Api
 {
@@ -26,6 +21,8 @@ namespace Keeper.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient<ISleeperClient, SleeperClient>();
+            services.AddHttpClient<IFantasyClient, FantasyClient>();
             services.AddSingleton<IPlayerService, PlayerService>();
             services.AddControllers();
         }

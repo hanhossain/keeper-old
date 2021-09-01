@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace Keeper.Core.Sleeper
 {
-    public sealed class SleeperClient : ISleeperClient, IDisposable
+    public sealed class SleeperClient : ISleeperClient
     {
-        private readonly HttpClient _client = new HttpClient();
+        private readonly HttpClient _client;
+
+        public SleeperClient(HttpClient httpClient)
+        {
+            _client = httpClient;
+        }
 
         public async Task<Dictionary<string, SleeperPlayer>> GetPlayersAsync()
         {
@@ -19,11 +24,6 @@ namespace Keeper.Core.Sleeper
 
             var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
             return await JsonSerializer.DeserializeAsync<Dictionary<string, SleeperPlayer>>(stream, options);
-        }
-
-        public void Dispose()
-        {
-            _client.Dispose();
         }
     }
 }
