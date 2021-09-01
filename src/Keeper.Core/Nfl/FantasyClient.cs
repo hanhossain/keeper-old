@@ -7,7 +7,7 @@ using AngleSharp;
 
 namespace Keeper.Core.Nfl
 {
-    public class FantasyClient : IDisposable
+    public class FantasyClient : IFantasyClient, IDisposable
     {
         private const int PageSize = 25;
         private readonly HttpClient _httpClient = new HttpClient();

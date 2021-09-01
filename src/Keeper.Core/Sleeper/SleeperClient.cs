@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Keeper.Core.Sleeper
 {
-    public sealed class SleeperClient : IDisposable
+    public sealed class SleeperClient : ISleeperClient, IDisposable
     {
         private readonly HttpClient _client = new HttpClient();
 

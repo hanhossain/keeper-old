@@ -10,7 +10,7 @@ using Nito.AsyncEx;
 
 namespace Keeper.Core.Services
 {
-    public class PlayerService : IDisposable
+    public class PlayerService : IPlayerService, IDisposable
     {
         private const int Season = 2020;
 
@@ -28,8 +28,14 @@ namespace Keeper.Core.Services
 
             return _players.Values.OrderBy(x => x.Name).ToList();
         }
+        
+        public void Dispose()
+        {
+            _sleeperClient.Dispose();
+            _fantasyClient.Dispose();
+        }
 
-        public async Task LoadAsync()
+        private async Task LoadAsync()
         {
             using var lease = await _lock.LockAsync();
             
@@ -92,12 +98,6 @@ namespace Keeper.Core.Services
             }
         }
 
-        public void Dispose()
-        {
-            _sleeperClient.Dispose();
-            _fantasyClient.Dispose();
-        }
-        
         private async Task<List<NflResult>> GetStatisticsAsync(NflPosition position)
         {
             return await _fantasyClient.GetAsync(Season, position);
