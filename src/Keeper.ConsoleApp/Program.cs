@@ -16,9 +16,10 @@ namespace Keeper.ConsoleApp
             var players = await playerService.GetPlayersAsync();
             Console.WriteLine($"{players.Count} players");
 
-            var player = players.First();
-            var json = JsonSerializer.Serialize(player);
-            Console.WriteLine(json);
+            foreach (var player in players.Where(x => x.Position == "DEF"))
+            {
+                Console.WriteLine(JsonSerializer.Serialize(player));
+            }
         }
     }
 }

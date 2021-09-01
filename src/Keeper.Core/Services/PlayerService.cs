@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keeper.Core.Models;
@@ -9,15 +10,17 @@ using Nito.AsyncEx;
 
 namespace Keeper.Core.Services
 {
-    public class PlayerService
+    public class PlayerService : IDisposable
     {
         private const int Season = 2020;
 
         private readonly AsyncLock _lock = new AsyncLock();
         private readonly Dictionary<int, Dictionary<int, PlayerStatistics>> _playerStatistics = new Dictionary<int, Dictionary<int, PlayerStatistics>>();
         private readonly Dictionary<int, Player> _players = new Dictionary<int, Player>();
-
-        private bool _loaded = false;
+        private readonly SleeperClient _sleeperClient = new SleeperClient();
+        private readonly FantasyClient _fantasyClient = new FantasyClient();
+        
+        private bool _loaded;
 
         public async Task<List<Player>> GetPlayersAsync()
         {
@@ -32,29 +35,6 @@ namespace Keeper.Core.Services
             
             if (!_loaded)
             {
-                using var sleeperClient = new SleeperClient();
-                using var fantasyClient = new FantasyClient();
-
-                var innerLock = new AsyncLock();
-
-                async Task<Dictionary<string, SleeperPlayer>> GetPlayersAsync()
-                {
-                    using var sleeperClient = new SleeperClient();
-                    var result = await sleeperClient.GetPlayersAsync();
-
-                    using var innerLease = await innerLock.LockAsync();
-
-                    return result;
-                }
-
-                async Task<List<NflResult>> GetStatisticsAsync(NflPosition position)
-                {
-                    var result = await fantasyClient.GetAsync(Season, position);
-                    using var innerLease = await innerLock.LockAsync();
-
-                    return result;
-                }
-
                 // get all statistics
                 var tasks = new List<Task<List<NflResult>>>()
                 {
@@ -66,7 +46,7 @@ namespace Keeper.Core.Services
                     GetStatisticsAsync(NflPosition.Defense)
                 };
 
-                var sleeperTask = GetPlayersAsync();
+                var sleeperTask = _sleeperClient.GetPlayersAsync();
                 var results = await Task.WhenAll(tasks);
                 var players = await sleeperTask;
 
@@ -82,7 +62,10 @@ namespace Keeper.Core.Services
 
                                 if (player.Position == "DEF")
                                 {
-                                    team = players.Values.Where(x => player.Name == $"{x.FirstName} {x.LastName}").Select(x => x.Team).SingleOrDefault();
+                                    team = players.Values
+                                        .Where(x => player.Name == $"{x.FirstName} {x.LastName}")
+                                        .Select(x => x.Team)
+                                        .SingleOrDefault();
                                 }
 
                                 _players[player.Id] = new Player()
@@ -107,6 +90,17 @@ namespace Keeper.Core.Services
 
                 _loaded = true;
             }
+        }
+
+        public void Dispose()
+        {
+            _sleeperClient.Dispose();
+            _fantasyClient.Dispose();
+        }
+        
+        private async Task<List<NflResult>> GetStatisticsAsync(NflPosition position)
+        {
+            return await _fantasyClient.GetAsync(Season, position);
         }
     }
 }

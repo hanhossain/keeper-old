@@ -9,7 +9,5 @@
         public string Position { get; set; }
 
         public string Team { get; set; }
-
-        public string PositionAndTeam => $"{Position} - {Team}";
     }
 }
