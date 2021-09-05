@@ -29,5 +29,13 @@ namespace Keeper.Api.Controllers
             var player = await _playerService.GetPlayerAsync(playerId);
             return Ok(player);
         }
+
+        [HttpGet]
+        [Route("api/players/{playerId}/statistics")]
+        public async Task<IActionResult> GetPlayerStatistics(int playerId)
+        {
+            var stats = await _playerService.GetPlayerStatistics(playerId);
+            return Ok(stats);
+        }
     }
 }

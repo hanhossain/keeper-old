@@ -2,10 +2,9 @@ using AngleSharp.Dom;
 
 namespace Keeper.Core.Nfl.Statistics
 {
-    public class KickingStatistics : PlayerStatistics
+    public class KickingStatistics
     {
         public KickingStatistics(IElement row)
-            : base(row)
         {
             Pat = new PatStatistics(row);
             FieldGoal = new FieldGoalStatistics(row);

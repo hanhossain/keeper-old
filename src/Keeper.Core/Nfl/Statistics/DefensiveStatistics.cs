@@ -2,10 +2,9 @@ using AngleSharp.Dom;
 
 namespace Keeper.Core.Nfl.Statistics
 {
-    public class DefensiveStatistics : PlayerStatistics
+    public class DefensiveStatistics
     {
         public DefensiveStatistics(IElement row)
-            : base(row)
         {
             Tackling = new TacklingStatistics(row);
             Turnover = new TurnoverStatistics(row);

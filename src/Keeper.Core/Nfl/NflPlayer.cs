@@ -12,13 +12,7 @@ namespace Keeper.Core.Nfl
             Name = row.QuerySelector(".playerName").TextContent;
             
             (Position, Team) = ParsePositionAndTeam(row);
-
-            Statistics = Position switch
-            {
-                "K" => new KickingStatistics(row),
-                "DEF" => new DefensiveStatistics(row),
-                _ => new OffensiveStatistics(row)
-            };
+            Statistics = new PlayerStatistics(row, Position);
         }
         
         public int Id { get; }

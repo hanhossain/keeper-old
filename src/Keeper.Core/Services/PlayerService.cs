@@ -41,6 +41,12 @@ namespace Keeper.Core.Services
 
             return _players[playerId];
         }
+
+        public async Task<Dictionary<int, PlayerStatistics>> GetPlayerStatistics(int playerId)
+        {
+            await LoadAsync();
+            return _playerStatistics[playerId];
+        }
         
         private async Task LoadAsync()
         {
