@@ -11,6 +11,6 @@ namespace Keeper.Core.Services
 
         Task<Player> GetPlayerAsync(int playerId);
 
-        Task<Dictionary<int, PlayerStatistics>> GetPlayerStatistics(int playerId);
+        Task<Dictionary<int, PlayerStatistics>> GetPlayerStatistics(int playerId, int season);
     }
 }

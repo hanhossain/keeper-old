@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Keeper.Core.Services;
@@ -40,12 +39,12 @@ namespace Keeper.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/players/{playerId}/statistics")]
-        public async Task<IActionResult> GetPlayerStatistics(int playerId)
+        [Route("api/players/{playerId}/seasons/{season}/statistics")]
+        public async Task<IActionResult> GetPlayerStatistics(int playerId, int season)
         {
             try
             {
-                var stats = await _playerService.GetPlayerStatistics(playerId);
+                var stats = await _playerService.GetPlayerStatistics(playerId, season);
                 return Ok(stats);
             }
             catch (KeyNotFoundException)

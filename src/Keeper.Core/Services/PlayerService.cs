@@ -13,9 +13,11 @@ namespace Keeper.Core.Services
     {
         private const int Season = 2020;
 
-        private readonly AsyncLock _lock = new AsyncLock();
-        private readonly Dictionary<int, Dictionary<int, PlayerStatistics>> _playerStatistics = new Dictionary<int, Dictionary<int, PlayerStatistics>>();
-        private readonly Dictionary<int, Player> _players = new Dictionary<int, Player>();
+        private readonly AsyncLock _lock = new();
+        
+        // { playerId: { season: { week: statistics }}}
+        private readonly Dictionary<int, Dictionary<int, Dictionary<int, PlayerStatistics>>> _playerStatistics = new();
+        private readonly Dictionary<int, Player> _players = new();
         
         private readonly ISleeperClient _sleeperClient;
         private readonly IFantasyClient _fantasyClient;
@@ -30,25 +32,25 @@ namespace Keeper.Core.Services
 
         public async Task<List<Player>> GetPlayersAsync()
         {
-            await LoadAsync();
+            await LoadAsync(Season);
 
             return _players.Values.OrderBy(x => x.Name).ToList();
         }
 
         public async Task<Player> GetPlayerAsync(int playerId)
         {
-            await LoadAsync();
+            await LoadAsync(Season);
 
             return _players[playerId];
         }
 
-        public async Task<Dictionary<int, PlayerStatistics>> GetPlayerStatistics(int playerId)
+        public async Task<Dictionary<int, PlayerStatistics>> GetPlayerStatistics(int playerId, int season)
         {
-            await LoadAsync();
-            return _playerStatistics[playerId];
+            await LoadAsync(season);
+            return _playerStatistics[playerId][season];
         }
         
-        private async Task LoadAsync()
+        private async Task LoadAsync(int season)
         {
             using var lease = await _lock.LockAsync();
             
@@ -57,12 +59,12 @@ namespace Keeper.Core.Services
                 // get all statistics
                 var tasks = new List<Task<List<NflResult>>>()
                 {
-                    GetStatisticsAsync(NflPosition.Quarterback),
-                    GetStatisticsAsync(NflPosition.RunningBack),
-                    GetStatisticsAsync(NflPosition.WideReceiver),
-                    GetStatisticsAsync(NflPosition.TightEnd),
-                    GetStatisticsAsync(NflPosition.Kicker),
-                    GetStatisticsAsync(NflPosition.Defense)
+                    _fantasyClient.GetAsync(season, NflPosition.Quarterback),
+                    _fantasyClient.GetAsync(season, NflPosition.RunningBack),
+                    _fantasyClient.GetAsync(season, NflPosition.WideReceiver),
+                    _fantasyClient.GetAsync(season, NflPosition.TightEnd),
+                    _fantasyClient.GetAsync(season, NflPosition.Kicker),
+                    _fantasyClient.GetAsync(season, NflPosition.Defense)
                 };
 
                 var sleeperTask = _sleeperClient.GetPlayersAsync();
@@ -98,22 +100,23 @@ namespace Keeper.Core.Services
 
                             if (!_playerStatistics.TryGetValue(player.Id, out var statistics))
                             {
-                                statistics = new Dictionary<int, PlayerStatistics>();
+                                statistics = new Dictionary<int, Dictionary<int, PlayerStatistics>>();
                                 _playerStatistics[player.Id] = statistics;
                             }
 
-                            statistics[page.Week] = player.Statistics;
+                            if (!statistics.TryGetValue(season, out var seasonStatistics))
+                            {
+                                seasonStatistics = new Dictionary<int, PlayerStatistics>();
+                                statistics[season] = seasonStatistics;
+                            }
+                            
+                            seasonStatistics[page.Week] = player.Statistics;
                         }
                     }
                 }
 
                 _loaded = true;
             }
-        }
-
-        private async Task<List<NflResult>> GetStatisticsAsync(NflPosition position)
-        {
-            return await _fantasyClient.GetAsync(Season, position);
         }
     }
 }
