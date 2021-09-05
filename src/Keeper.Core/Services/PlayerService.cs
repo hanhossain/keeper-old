@@ -35,6 +35,13 @@ namespace Keeper.Core.Services
             return _players.Values.OrderBy(x => x.Name).ToList();
         }
 
+        public async Task<Player> GetPlayerAsync(int playerId)
+        {
+            await LoadAsync();
+
+            return _players[playerId];
+        }
+        
         private async Task LoadAsync()
         {
             using var lease = await _lock.LockAsync();
