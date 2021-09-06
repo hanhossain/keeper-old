@@ -6,7 +6,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="AngleSharp" Version="0.14.0" />
+        <PackageReference Include="AngleSharp" Version="0.16.0" />
         <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     </ItemGroup>
     
