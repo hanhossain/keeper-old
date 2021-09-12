@@ -52,5 +52,20 @@ namespace Keeper.Api.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet]
+        [Route("api/players/{playerId}/seasons/{season}/weeks/{week}/matchups")]
+        public async Task<IActionResult> GetPlayerMatchups(int playerId, int season, int week)
+        {
+            try
+            {
+                var matchups = await _playerService.GetPlayerMatchups(playerId, season, week);
+                return Ok(matchups);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }

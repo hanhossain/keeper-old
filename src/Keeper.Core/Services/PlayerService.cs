@@ -19,6 +19,9 @@ namespace Keeper.Core.Services
         private readonly Dictionary<int, Dictionary<int, Dictionary<int, PlayerStatistics>>> _playerStatistics = new();
         private readonly Dictionary<int, Player> _players = new();
         
+        // { team: { season: { week: opponent }}}
+        private readonly Dictionary<string, Dictionary<int, Dictionary<int, string>>> _matchups = new(); 
+        
         private readonly ISleeperClient _sleeperClient;
         private readonly IFantasyClient _fantasyClient;
         
@@ -48,6 +51,23 @@ namespace Keeper.Core.Services
         {
             await LoadAsync(season);
             return _playerStatistics[playerId][season];
+        }
+
+        public async Task<List<PlayerMatchup>> GetPlayerMatchups(int playerId, int season, int week)
+        {
+            await LoadAsync(season);
+            var playerTeam = _players[playerId].Team;
+            var opponent = _matchups[playerTeam][season][week];
+
+            return _players
+                .Values
+                .Where(x => x.Team == opponent)
+                .Select(x => new PlayerMatchup()
+                {
+                    Player = x,
+                    Statistics = _playerStatistics[x.Id][season][week]
+                })
+                .ToList();
         }
         
         private async Task LoadAsync(int season)
@@ -89,13 +109,35 @@ namespace Keeper.Core.Services
                                         .SingleOrDefault();
                                 }
 
-                                _players[player.Id] = new Player()
+                                var playerModel = new Player()
                                 {
                                     Id = player.Id,
                                     Name = player.Name,
                                     Position = player.Position,
                                     Team = player.Team?.Name ?? team
                                 };
+                                
+                                _players[player.Id] = playerModel;
+
+                                if (!string.IsNullOrWhiteSpace(playerModel.Team))
+                                {
+                                    if (!_matchups.TryGetValue(playerModel.Team, out var teamMatchups))
+                                    {
+                                        teamMatchups = new Dictionary<int, Dictionary<int, string>>();
+                                        _matchups[playerModel.Team] = teamMatchups;
+                                    }
+
+                                    if (!teamMatchups.TryGetValue(season, out var seasonMatchups))
+                                    {
+                                        seasonMatchups = new Dictionary<int, string>();
+                                        teamMatchups[season] = seasonMatchups;
+                                    }
+
+                                    if (!string.IsNullOrWhiteSpace(player.Team?.Opponent) && !seasonMatchups.ContainsKey(page.Week))
+                                    {
+                                        seasonMatchups[page.Week] = player.Team?.Opponent;
+                                    }
+                                }
                             }
 
                             if (!_playerStatistics.TryGetValue(player.Id, out var statistics))
