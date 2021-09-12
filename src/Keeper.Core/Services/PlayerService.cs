@@ -47,13 +47,13 @@ namespace Keeper.Core.Services
             return _players[playerId];
         }
 
-        public async Task<Dictionary<int, PlayerStatistics>> GetPlayerStatistics(int playerId, int season)
+        public async Task<Dictionary<int, PlayerStatistics>> GetPlayerStatisticsAsync(int playerId, int season)
         {
             await LoadAsync(season);
             return _playerStatistics[playerId][season];
         }
 
-        public async Task<List<PlayerMatchup>> GetPlayerMatchups(int playerId, int season, int week)
+        public async Task<List<PlayerMatchup>> GetPlayerMatchupsAsync(int playerId, int season, int week)
         {
             await LoadAsync(season);
             var playerTeam = _players[playerId].Team;

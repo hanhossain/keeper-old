@@ -44,7 +44,7 @@ namespace Keeper.Api.Controllers
         {
             try
             {
-                var stats = await _playerService.GetPlayerStatistics(playerId, season);
+                var stats = await _playerService.GetPlayerStatisticsAsync(playerId, season);
                 return Ok(stats);
             }
             catch (KeyNotFoundException)
@@ -59,7 +59,7 @@ namespace Keeper.Api.Controllers
         {
             try
             {
-                var matchups = await _playerService.GetPlayerMatchups(playerId, season, week);
+                var matchups = await _playerService.GetPlayerMatchupsAsync(playerId, season, week);
                 return Ok(matchups);
             }
             catch (KeyNotFoundException)
