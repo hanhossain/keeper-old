@@ -11,8 +11,6 @@ namespace Keeper.Core.Services
 {
     public class PlayerService : IPlayerService
     {
-        private const int Season = 2020;
-
         private readonly AsyncLock _lock = new();
         
         // { playerId: { season: { week: statistics }}}
@@ -26,6 +24,7 @@ namespace Keeper.Core.Services
         private readonly IFantasyClient _fantasyClient;
         
         private bool _loaded;
+        private SleeperNflState _nflState;
 
         public PlayerService(ISleeperClient sleeperClient, IFantasyClient fantasyClient)
         {
@@ -35,27 +34,27 @@ namespace Keeper.Core.Services
 
         public async Task<List<Player>> GetPlayersAsync()
         {
-            await LoadAsync(Season);
+            await LoadAsync();
 
             return _players.Values.OrderBy(x => x.Name).ToList();
         }
 
         public async Task<Player> GetPlayerAsync(int playerId)
         {
-            await LoadAsync(Season);
+            await LoadAsync();
 
             return _players[playerId];
         }
 
         public async Task<Dictionary<int, PlayerStatistics>> GetPlayerStatisticsAsync(int playerId, int season)
         {
-            await LoadAsync(season);
+            await LoadAsync();
             return _playerStatistics[playerId][season];
         }
 
         public async Task<List<PlayerMatchup>> GetPlayerMatchupsAsync(int playerId, int season, int week)
         {
-            await LoadAsync(season);
+            await LoadAsync();
             var playerTeam = _players[playerId].Team;
             var opponent = _matchups[playerTeam][season][week];
 
@@ -70,12 +69,15 @@ namespace Keeper.Core.Services
                 .ToList();
         }
         
-        private async Task LoadAsync(int season)
+        private async Task LoadAsync()
         {
             using var lease = await _lock.LockAsync();
             
             if (!_loaded)
             {
+                _nflState = await _sleeperClient.GetNflStateAsync();
+                int season = _nflState.Season;
+
                 // get all statistics
                 var tasks = new List<Task<List<NflResult>>>()
                 {
