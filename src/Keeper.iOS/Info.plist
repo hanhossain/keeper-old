@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>Keeper.iOS</string>
+	<string>Keeper</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.hanhossain.Keeper</string>
 	<key>CFBundleShortVersionString</key>
