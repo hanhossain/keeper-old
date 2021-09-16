@@ -1,4 +1,8 @@
-﻿using Foundation;
+﻿using System.Net.Http;
+using Foundation;
+using Keeper.Core.Nfl;
+using Keeper.Core.Services;
+using Keeper.Core.Sleeper;
 using UIKit;
 
 namespace Keeper.iOS
@@ -18,9 +22,14 @@ namespace Keeper.iOS
             // This delegate does not imply the connecting scene or session are new (see UIApplicationDelegate `GetConfiguration` instead).
             if (scene is UIWindowScene windowScene)
             {
+                var httpClient = new HttpClient();
+                var sleeperClient = new SleeperClient(httpClient);
+                var fantasyClient = new FantasyClient(httpClient);
+                var playerService = new PlayerService(sleeperClient, fantasyClient);
+
                 Window = new UIWindow(windowScene)
                 {
-                    RootViewController = new ViewController()
+                    RootViewController = new PlayersTableViewController(playerService)
                 };
 
                 Window.MakeKeyAndVisible();
