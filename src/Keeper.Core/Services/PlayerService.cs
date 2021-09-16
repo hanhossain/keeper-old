@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keeper.Core.Models;
@@ -18,7 +19,10 @@ namespace Keeper.Core.Services
         private readonly Dictionary<int, Player> _players = new();
         
         // { team: { season: { week: opponent }}}
-        private readonly Dictionary<string, Dictionary<int, Dictionary<int, string>>> _matchups = new(); 
+        private readonly Dictionary<string, Dictionary<int, Dictionary<int, string>>> _matchups = new();
+
+        private readonly Dictionary<string, int> _sleeperToNfl = new Dictionary<string, int>();
+        private readonly Dictionary<int, string> _nflToSleeper = new Dictionary<int, string>();
         
         private readonly ISleeperClient _sleeperClient;
         private readonly IFantasyClient _fantasyClient;
@@ -93,22 +97,51 @@ namespace Keeper.Core.Services
                 var results = await Task.WhenAll(tasks);
                 var players = await sleeperTask;
 
+                var playersToSkip = new HashSet<int>();
+
                 foreach (var result in results)
                 {
                     foreach (var page in result)
                     {
                         foreach (var player in page.Values)
                         {
+                            if (playersToSkip.Contains(player.Id))
+                            {
+                                continue;
+                            }
+
                             if (!_players.ContainsKey(player.Id))
                             {
-                                string team = null;
+                                string team = player.Team?.Name;
+
+                                if (team == "LA")
+                                {
+                                    team = "LAR";
+                                }
+
+                                var sleeperQuery = players.Values
+                                    .Where(x => player.Name == $"{x.FirstName} {x.LastName}")
+                                    .Where(x => player.Position == x.Position);
+
+                                if (player.Position != "DEF")
+                                {
+                                    sleeperQuery = sleeperQuery.Where(x => x.Team == team);
+                                }
+
+                                var sleeperPlayers = sleeperQuery.ToList();
+
+                                if (sleeperPlayers.Count == 0)
+                                {
+                                    Console.WriteLine($"Skipping processing {player.Name} ({player.Position} - {player.Team?.Name})");
+                                    playersToSkip.Add(player.Id);
+                                    continue;
+                                }
+
+                                var sleeperPlayer = sleeperPlayers.Single();
 
                                 if (player.Position == "DEF")
                                 {
-                                    team = players.Values
-                                        .Where(x => player.Name == $"{x.FirstName} {x.LastName}")
-                                        .Select(x => x.Team)
-                                        .SingleOrDefault();
+                                    team = sleeperPlayer.Team;
                                 }
 
                                 var playerModel = new Player()
@@ -116,8 +149,11 @@ namespace Keeper.Core.Services
                                     Id = player.Id,
                                     Name = player.Name,
                                     Position = player.Position,
-                                    Team = player.Team?.Name ?? team
+                                    Team = team
                                 };
+
+                                _sleeperToNfl[sleeperPlayer.PlayerId] = player.Id;
+                                _nflToSleeper[player.Id] = sleeperPlayer.PlayerId;
                                 
                                 _players[player.Id] = playerModel;
 
