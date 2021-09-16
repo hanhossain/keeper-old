@@ -1,8 +1,7 @@
-﻿using System;
-using Foundation;
+﻿using Foundation;
 using UIKit;
 
-namespace NewSingleViewTemplate
+namespace Keeper.iOS
 {
     [Register("SceneDelegate")]
     public class SceneDelegate : UIResponder, IUIWindowSceneDelegate
@@ -17,6 +16,15 @@ namespace NewSingleViewTemplate
             // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
             // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
             // This delegate does not imply the connecting scene or session are new (see UIApplicationDelegate `GetConfiguration` instead).
+            if (scene is UIWindowScene windowScene)
+            {
+                Window = new UIWindow(windowScene)
+                {
+                    RootViewController = new ViewController()
+                };
+
+                Window.MakeKeyAndVisible();
+            }
         }
 
         [Export("sceneDidDisconnect:")]
