@@ -8,5 +8,11 @@ namespace Keeper.Core.Sleeper
         Task<Dictionary<string, SleeperPlayer>> GetPlayersAsync();
 
         Task<SleeperNflState> GetNflStateAsync();
+
+        Task<SleeperUser> GetUserAsync(string usernameOrId);
+
+        Task<byte[]> GetAvatarAsync(string avatarId);
+
+        Task<byte[]> GetAvatarThumbnailAsync(string avatarId);
     }
 }

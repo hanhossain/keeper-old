@@ -10,6 +10,12 @@ namespace Keeper.Core.Sleeper
     {
         private readonly HttpClient _client;
 
+        private readonly JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString
+        };
+
         public SleeperClient(HttpClient httpClient)
         {
             _client = httpClient;
@@ -21,9 +27,7 @@ namespace Keeper.Core.Sleeper
             response.EnsureSuccessStatusCode();
 
             await using var stream = await response.Content.ReadAsStreamAsync();
-
-            var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-            return await JsonSerializer.DeserializeAsync<Dictionary<string, SleeperPlayer>>(stream, options);
+            return await JsonSerializer.DeserializeAsync<Dictionary<string, SleeperPlayer>>(stream, _options);
         }
 
         public async Task<SleeperNflState> GetNflStateAsync()
@@ -32,14 +36,32 @@ namespace Keeper.Core.Sleeper
             response.EnsureSuccessStatusCode();
 
             await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<SleeperNflState>(stream, _options);
+        }
 
-            var options = new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            };
+        public async Task<SleeperUser> GetUserAsync(string usernameOrId)
+        {
+            using var response = await _client.GetAsync($"https://api.sleeper.app/v1/user/{usernameOrId}");
+            response.EnsureSuccessStatusCode();
 
-            return await JsonSerializer.DeserializeAsync<SleeperNflState>(stream, options);
+            await using var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<SleeperUser>(stream, _options);
+        }
+
+        public async Task<byte[]> GetAvatarAsync(string avatarId)
+        {
+            using var response = await _client.GetAsync($"https://sleepercdn.com/avatars/{avatarId}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        public async Task<byte[]> GetAvatarThumbnailAsync(string avatarId)
+        {
+            using var response = await _client.GetAsync($"https://sleepercdn.com/avatars/thumbs/{avatarId}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsByteArrayAsync();
         }
     }
 }

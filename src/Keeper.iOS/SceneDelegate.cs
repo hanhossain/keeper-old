@@ -26,10 +26,11 @@ namespace Keeper.iOS
                 var sleeperClient = new SleeperClient(httpClient);
                 var fantasyClient = new FantasyClient(httpClient);
                 var playerService = new PlayerService(sleeperClient, fantasyClient);
+                var viewController = new ViewController();
 
                 Window = new UIWindow(windowScene)
                 {
-                    RootViewController = new PlayersTableViewController(playerService)
+                    RootViewController = viewController
                 };
 
                 Window.MakeKeyAndVisible();
