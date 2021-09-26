@@ -10,28 +10,24 @@ import Foundation
 class PlayerService {
     let sleeper = SleeperClient()
     let nfl = NFLClient()
+    let appDelegate: AppDelegate
     
-    var players: [Player]?
+    var players: [SleeperPlayer]?
     
-    func getPlayers(completion: @escaping ([Player]) -> ()) {
+    init(delegate: AppDelegate) {
+        appDelegate = delegate
+    }
+    
+    func getPlayers(completion: @escaping ([SleeperPlayer]) -> ()) {
         if let players = players {
             completion(players)
             return
         }
         
         sleeper.getPlayers { (players) in
-            let validPositions: Set = ["QB", "RB", "WR", "TE", "K", "DEF"]
-            
-            let players = players.values
-                .filter({ $0.active && validPositions.contains($0.position ?? "")})
-                .map({ Player(firstName: $0.firstName, lastName: $0.lastName, position: $0.position!, team: $0.team) })
-                .sorted { (left, right) -> Bool in
-                    if left.lastName == right.lastName {
-                        return left.firstName < right.firstName
-                    }
-
-                    return left.lastName < right.lastName
-                }
+            let keeperRepository = KeeperRepository(delegate: self.appDelegate)
+            keeperRepository.upsertSleeperPlayers(players: players)
+            let players = keeperRepository.getSleeperPlayers()
             
             self.players = players
             completion(players)

@@ -11,10 +11,10 @@ class PlayersTableViewController: UITableViewController {
     
     let cellId = "player"
     let searchController = UISearchController(searchResultsController: nil)
-    let playerService = PlayerService()
+    let playerService = PlayerService(delegate: UIApplication.shared.delegate as! AppDelegate)
     
-    var players = [Character : [Player]]()
-    var filteredPlayers = [Character : [Player]]()
+    var players = [Character : [SleeperPlayer]]()
+    var filteredPlayers = [Character : [SleeperPlayer]]()
     
     var sections = [Character]()
     var filteredSections = [Character]()
@@ -54,8 +54,8 @@ class PlayersTableViewController: UITableViewController {
         }
     }
     
-    func getPlayersAndSections(from originalPlayers: [Player]) -> (players: [Character : [Player]], sections: [Character]) {
-        var players = [Character : [Player]]()
+    func getPlayersAndSections(from originalPlayers: [SleeperPlayer]) -> (players: [Character : [SleeperPlayer]], sections: [Character]) {
+        var players = [Character : [SleeperPlayer]]()
         var sections = [Character]()
         
         for player in originalPlayers {
@@ -81,9 +81,10 @@ class PlayersTableViewController: UITableViewController {
     func filterPlayers(_ query: String) {
         let normalizedQuery = query.lowercased()
         
-        playerService.getPlayers { (players: [Player]) in
+        playerService.getPlayers { (players: [SleeperPlayer]) in
             let filtered = players.filter { (player) -> Bool in
-                return player.name.lowercased().contains(normalizedQuery)
+                let name = "\(player.firstName) \(player.lastName)"
+                return name.lowercased().contains(normalizedQuery)
             }
             
             (self.filteredPlayers, self.filteredSections) = self.getPlayersAndSections(from: filtered)
@@ -113,8 +114,8 @@ class PlayersTableViewController: UITableViewController {
         let sections = isFiltering ? filteredSections : self.sections
         
         if let player = players[sections[indexPath.section]]?[indexPath.row] {
-            cell.textLabel?.text = player.name
-            cell.detailTextLabel?.text = player.positionAndTeam
+            cell.textLabel?.text = "\(player.firstName) \(player.lastName)"
+            cell.detailTextLabel?.text = "\(player.position ?? "") - \(player.team ?? "")"
         }
 
         return cell
