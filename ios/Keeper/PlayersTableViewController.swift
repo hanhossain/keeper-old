@@ -46,7 +46,12 @@ class PlayersTableViewController: UITableViewController {
             }
         }
         
-        playerService.getStatistics()
+        let sleeperClient = SleeperClient()
+        sleeperClient.getNFLState { nflState in
+            DispatchQueue.main.async {
+                self.title = "Season: \(nflState.season)"
+            }
+        }
     }
     
     func getPlayersAndSections(from originalPlayers: [Player]) -> (players: [Character : [Player]], sections: [Character]) {
