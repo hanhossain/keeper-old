@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Keeper.Core
 {
     public class Program
