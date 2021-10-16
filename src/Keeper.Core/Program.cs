@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
 using Keeper.Core.Nfl;
@@ -25,47 +26,46 @@ namespace Keeper.Core
             };
 
             var results = await Task.WhenAll(tasks);
-
-            await using var dbContext = new DatabaseContext();
-
-            foreach (var seasonResults in results)
-            {
-                foreach (var weekResults in seasonResults)
+            
+            var databaseTasks = results
+                .SelectMany(x => x)
+                .SelectMany(x => x.Values)
+                .Select(async x =>
                 {
-                    foreach (var playerResult in weekResults.Values)
+                    await using var dbContext = new DatabaseContext();
+
+                    if (!await dbContext.NflPlayers.AnyAsync(p => p.Id == x.Id))
                     {
-                        if (!await dbContext.NflPlayers.AnyAsync(x => x.Id == playerResult.Id))
+                        var player = new NflPlayer()
                         {
-                            var player = new NflPlayer()
-                            {
-                                Id = playerResult.Id,
-                                Name = playerResult.Name,
-                                Position = playerResult.Position,
-                                Team = playerResult.Team?.Name
-                            };
+                            Id = x.Id,
+                            Name = x.Name,
+                            Position = x.Position,
+                            Team = x.Team?.Name
+                        };
 
-                            dbContext.NflPlayers.Add(player);
-                            await dbContext.SaveChangesAsync();
-                        }
-
-                        if (!await dbContext.NflPlayerStatistics.AnyAsync(x =>
-                            x.PlayerId == playerResult.Id && x.Season == weekResults.Season &&
-                            x.Week == weekResults.Week))
-                        {
-                            var statistics = new NflPlayerStatistics()
-                            {
-                                PlayerId = playerResult.Id,
-                                Season = weekResults.Season,
-                                Week = weekResults.Week,
-                                FantasyPoints = playerResult.Statistics?.FantasyPoints ?? 0
-                            };
-
-                            dbContext.NflPlayerStatistics.Add(statistics);
-                            await dbContext.SaveChangesAsync();
-                        }
+                        dbContext.NflPlayers.Add(player);
+                        await dbContext.SaveChangesAsync();
                     }
-                }
-            }
+
+                    if (!await dbContext.NflPlayerStatistics.AnyAsync(p =>
+                        p.PlayerId == x.Id && p.Season == x.Season &&
+                        p.Week == x.Week))
+                    {
+                        var statistics = new NflPlayerStatistics()
+                        {
+                            PlayerId = x.Id,
+                            Season = x.Season,
+                            Week = x.Week,
+                            FantasyPoints = x.Statistics?.FantasyPoints ?? 0
+                        };
+
+                        dbContext.NflPlayerStatistics.Add(statistics);
+                        await dbContext.SaveChangesAsync();
+                    }
+                });
+            
+            await Task.WhenAll(databaseTasks);
         }
     }
 }

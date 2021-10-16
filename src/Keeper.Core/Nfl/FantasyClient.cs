@@ -41,7 +41,7 @@ namespace Keeper.Core.Nfl
 
             var players = tableBody?
                 .QuerySelectorAll("tr")
-                .Select(x => new NflPlayer(x))
+                .Select(x => new NflPlayer(x, season, week))
                 .ToList() ?? new List<NflPlayer>();
 
             var weeks = document

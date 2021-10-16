@@ -6,13 +6,15 @@ namespace Keeper.Core.Nfl
 {
     public class NflPlayer
     {
-        public NflPlayer(IElement row)
+        public NflPlayer(IElement row, int season, int week)
         {
             Id = int.Parse(row.GetAttribute("class").Split(' ', '-')[1]);
             Name = row.QuerySelector(".playerName").TextContent;
             
             (Position, Team) = ParsePositionAndTeam(row);
             Statistics = new PlayerStatistics(row, Position);
+            Season = season;
+            Week = week;
         }
         
         public int Id { get; }
@@ -20,6 +22,10 @@ namespace Keeper.Core.Nfl
         public string Name { get; }
 
         public string Position { get; }
+
+        public int Season { get; set; }
+
+        public int Week { get; set; }
         
         public NflTeam Team { get; }
 
