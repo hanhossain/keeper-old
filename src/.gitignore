@@ -405,4 +405,4 @@ ASALocalRun/
 .localhistory/
 
 # local config
-keeper.sqlite
+keeper.sqlite*
