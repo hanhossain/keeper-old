@@ -47,6 +47,22 @@ namespace Keeper.Core
                             dbContext.NflPlayers.Add(player);
                             await dbContext.SaveChangesAsync();
                         }
+
+                        if (!await dbContext.NflPlayerStatistics.AnyAsync(x =>
+                            x.PlayerId == playerResult.Id && x.Season == weekResults.Season &&
+                            x.Week == weekResults.Week))
+                        {
+                            var statistics = new NflPlayerStatistics()
+                            {
+                                PlayerId = playerResult.Id,
+                                Season = weekResults.Season,
+                                Week = weekResults.Week,
+                                FantasyPoints = playerResult.Statistics?.FantasyPoints ?? 0
+                            };
+
+                            dbContext.NflPlayerStatistics.Add(statistics);
+                            await dbContext.SaveChangesAsync();
+                        }
                     }
                 }
             }

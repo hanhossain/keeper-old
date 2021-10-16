@@ -1,4 +1,6 @@
-﻿namespace Keeper.Core.Database
+﻿using System.Collections.Generic;
+
+namespace Keeper.Core.Database
 {
     public class NflPlayer
     {
@@ -9,5 +11,11 @@
         public string Position { get; set; }
 
         public string Team { get; set; }
+
+        #region Navigation Properties
+
+        public List<NflPlayerStatistics> PlayerStatistics { get; set; }
+        
+        #endregion
     }
 }
