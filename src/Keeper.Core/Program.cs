@@ -57,10 +57,30 @@ namespace Keeper.Core
                             PlayerId = x.Id,
                             Season = x.Season,
                             Week = x.Week,
-                            FantasyPoints = x.Statistics?.FantasyPoints ?? 0
+                            FantasyPoints = x.Statistics.FantasyPoints
                         };
 
                         dbContext.NflPlayerStatistics.Add(statistics);
+                        await dbContext.SaveChangesAsync();
+                    }
+
+                    if (x.Statistics.Kicking != null && !await dbContext.NflKickingStatistics.AnyAsync(p =>
+                        p.PlayerId == x.Id && p.Season == x.Season && p.Week == x.Week))
+                    {
+                        var kickingStatistics = new NflKickingStatistics()
+                        {
+                            PlayerId = x.Id,
+                            Season = x.Season,
+                            Week = x.Week,
+                            PatMade = x.Statistics.Kicking.Pat.Made,
+                            FieldGoal0To19Yards = x.Statistics.Kicking.FieldGoal.Yards0To19,
+                            FieldGoal20To29Yards = x.Statistics.Kicking.FieldGoal.Yards20To29,
+                            FieldGoal30To39Yards = x.Statistics.Kicking.FieldGoal.Yards30To39,
+                            FieldGoal40To49Yards = x.Statistics.Kicking.FieldGoal.Yards40To49,
+                            FieldGoal50PlusYards = x.Statistics.Kicking.FieldGoal.Yards50Plus
+                        };
+
+                        dbContext.NflKickingStatistics.Add(kickingStatistics);
                         await dbContext.SaveChangesAsync();
                     }
                 });

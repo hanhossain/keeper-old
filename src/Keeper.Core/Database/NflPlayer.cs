@@ -15,6 +15,8 @@ namespace Keeper.Core.Database
         #region Navigation Properties
 
         public List<NflPlayerStatistics> PlayerStatistics { get; set; }
+
+        public List<NflKickingStatistics> NflKickingStatistics { get; set; }
         
         #endregion
     }
