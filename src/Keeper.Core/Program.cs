@@ -12,6 +12,8 @@ namespace Keeper.Core
     {
         public static async Task Main(string[] args)
         {
+            await MigrateDatabaseAsync();
+
             using var httpClient = new HttpClient();
             var fantasyClient = new FantasyClient(httpClient);
 
@@ -86,6 +88,12 @@ namespace Keeper.Core
                 });
             
             await Task.WhenAll(databaseTasks);
+        }
+
+        private static async Task MigrateDatabaseAsync()
+        {
+            using var context = new DatabaseContext();
+            await context.Database.MigrateAsync();
         }
     }
 }
