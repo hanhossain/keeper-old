@@ -10,6 +10,8 @@ namespace Keeper.Core.Database
 
         public DbSet<NflKickingStatistics> NflKickingStatistics { get; set; }
 
+        public DbSet<NflDefensiveStatistics> NflDefensiveStatistics { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Data Source=/Users/hanhossain/Developer/keeper/src/keeper.sqlite");
@@ -21,6 +23,9 @@ namespace Keeper.Core.Database
                 .HasKey(x => new { x.PlayerId, x.Season, x.Week });
 
             modelBuilder.Entity<NflKickingStatistics>()
+                .HasKey(x => new { x.PlayerId, x.Season, x.Week });
+
+            modelBuilder.Entity<NflDefensiveStatistics>()
                 .HasKey(x => new { x.PlayerId, x.Season, x.Week });
         }
     }

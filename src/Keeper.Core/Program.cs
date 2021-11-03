@@ -85,6 +85,28 @@ namespace Keeper.Core
                         dbContext.NflKickingStatistics.Add(kickingStatistics);
                         await dbContext.SaveChangesAsync();
                     }
+
+                    if (x.Statistics.Defensive != null && !await dbContext.NflDefensiveStatistics.AnyAsync(p =>
+                        p.PlayerId == x.Id && p.Season == x.Season && p.Week == x.Week))
+                    {
+                        var defensiveStatistics = new NflDefensiveStatistics()
+                        {
+                            PlayerId = x.Id,
+                            Season = x.Season,
+                            Week = x.Week,
+                            Sacks = x.Statistics.Defensive.Tackling.Sacks,
+                            Interceptions = x.Statistics.Defensive.Turnover.Interceptions,
+                            FumblesRecovered = x.Statistics.Defensive.Turnover.FumblesRecovered,
+                            Safeties = x.Statistics.Defensive.Score.Safeties,
+                            Touchdowns = x.Statistics.Defensive.Score.Touchdowns,
+                            Def2PtRet = x.Statistics.Defensive.Score.Def2PtRet,
+                            RetTouchdowns = x.Statistics.Defensive.Returning.Touchdowns,
+                            PointsAllowed = x.Statistics.Defensive.Points.PointsAllowed
+                        };
+
+                        dbContext.NflDefensiveStatistics.Add(defensiveStatistics);
+                        await dbContext.SaveChangesAsync();
+                    }
                 });
             
             await Task.WhenAll(databaseTasks);
