@@ -124,7 +124,7 @@ namespace Keeper.Core
 
         private static async Task MigrateDatabaseAsync()
         {
-            using var context = new DatabaseContext();
+            await using var context = new DatabaseContext();
             await context.Database.MigrateAsync();
         }
     }
