@@ -14,6 +14,8 @@ namespace Keeper.Core.Database
 
         public DbSet<NflOffensiveStatistics> NflOffensiveStatistics { get; set; }
 
+        public DbSet<SleeperPlayer> SleeperPlayers { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Data Source=/Users/hanhossain/Developer/keeper/src/keeper.sqlite");

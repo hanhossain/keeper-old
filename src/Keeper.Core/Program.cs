@@ -6,8 +6,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
 using Keeper.Core.Nfl;
+using Keeper.Core.Sleeper;
 using Microsoft.EntityFrameworkCore;
 using NflPlayer = Keeper.Core.Database.NflPlayer;
+using SleeperPlayer = Keeper.Core.Database.SleeperPlayer;
 
 namespace Keeper.Core
 {
@@ -19,16 +21,17 @@ namespace Keeper.Core
             
             await MigrateDatabaseAsync();
 
+            using var httpClient = new HttpClient();
             var tasks = new List<Task>();
             
             if (command.UpdateNfl)
             {
-                tasks.Add(UpdateNflAsync());
+                tasks.Add(UpdateNflAsync(httpClient));
             }
 
             if (command.UpdateSleeper)
             {
-                tasks.Add(UpdateSleeperAsync());
+                tasks.Add(UpdateSleeperAsync(httpClient));
             }
 
             if (tasks.Any())
@@ -43,21 +46,59 @@ namespace Keeper.Core
             }
         }
 
-        private static Task UpdateSleeperAsync()
+        private static async Task UpdateSleeperAsync(HttpClient httpClient)
         {
             Console.WriteLine("Updating Sleeper data...");
             var stopwatch = Stopwatch.StartNew();
+
+            var sleeperClient = new SleeperClient(httpClient);
+            var players = await sleeperClient.GetPlayersAsync();
+
+            var databaseTasks = players
+                .Values
+                .Select(async x =>
+                {
+                    using var dbContext = new DatabaseContext();
+
+                    var player = await dbContext.SleeperPlayers.FindAsync(x.PlayerId);
+                    bool isUpdate = true;
+
+                    if (player == null)
+                    {
+                        isUpdate = false;
+                        player = new SleeperPlayer()
+                        {
+                            Id = x.PlayerId
+                        };
+                    }
+
+                    player.Active = x.Active;
+                    player.FirstName = x.FirstName;
+                    player.FullName = x.FullName;
+                    player.LastName = x.LastName;
+                    player.Position = x.Position;
+                    player.Status = x.Status;
+                    player.Team = x.Team;
+
+                    if (!isUpdate)
+                    {
+                        dbContext.SleeperPlayers.Add(player);
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                });
+
+            await Task.WhenAll(databaseTasks);
+
             stopwatch.Stop();
             Console.WriteLine($"Updating Sleeper data... Done! Completed in {stopwatch.ElapsedMilliseconds} ms.");
-            return Task.CompletedTask;
         }
 
-        private static async Task UpdateNflAsync()
+        private static async Task UpdateNflAsync(HttpClient httpClient)
         {
             Console.WriteLine("Updating NFL data...");
             var stopwatch = Stopwatch.StartNew();
 
-            using var httpClient = new HttpClient();
             var fantasyClient = new FantasyClient(httpClient);
 
             var tasks = new[]
@@ -195,7 +236,17 @@ namespace Keeper.Core
         private static async Task MigrateDatabaseAsync()
         {
             await using var context = new DatabaseContext();
-            await context.Database.MigrateAsync();
+            var migrations = await context.Database.GetPendingMigrationsAsync();
+
+            if (migrations.Any())
+            {
+                Console.WriteLine("Migrating database...");
+                var stopwatch = Stopwatch.StartNew();
+
+                await context.Database.MigrateAsync();
+                stopwatch.Stop();
+                Console.WriteLine($"Migrating database... Done! Completed in {stopwatch.ElapsedMilliseconds} ms.");
+            }
         }
     }
 }
