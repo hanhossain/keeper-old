@@ -117,6 +117,39 @@ namespace Keeper.Core
                         dbContext.NflDefensiveStatistics.Add(defensiveStatistics);
                         await dbContext.SaveChangesAsync();
                     }
+
+                    if (x.Statistics.Offensive != null && !await dbContext.NflOffensiveStatistics.AnyAsync(p =>
+                        p.PlayerId == x.Id && p.Season == x.Season && p.Week == x.Week))
+                    {
+                        var passing = x.Statistics.Offensive.Passing;
+                        var rushing = x.Statistics.Offensive.Rushing;
+                        var receiving = x.Statistics.Offensive.Receiving;
+                        var fumbles = x.Statistics.Offensive.Fumble;
+                        var returning = x.Statistics.Offensive.Returning;
+                        var misc = x.Statistics.Offensive.Miscellaneous;
+
+                        var offensiveStatistics = new NflOffensiveStatistics()
+                        {
+                            PlayerId = x.Id,
+                            Season = x.Season,
+                            Week = x.Week,
+                            PassingInterceptions = passing.Interceptions,
+                            PassingTouchdowns = passing.Touchdowns,
+                            PassingYards = passing.Yards,
+                            RushingTouchdowns = rushing.Touchdowns,
+                            RushingYards = rushing.Yards,
+                            ReceivingReceptions = receiving.Receptions,
+                            ReceivingTouchdowns = receiving.Touchdowns,
+                            ReceivingYards = receiving.Yards,
+                            FumblesLost = fumbles.Lost,
+                            FumbleTouchdowns = fumbles.Touchdowns,
+                            ReturningTouchdowns = returning.Touchdowns,
+                            TwoPointConversions = misc.TwoPointConversions
+                        };
+
+                        dbContext.NflOffensiveStatistics.Add(offensiveStatistics);
+                        await dbContext.SaveChangesAsync();
+                    }
                 });
 
             await Task.WhenAll(databaseTasks);
