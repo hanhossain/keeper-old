@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
@@ -15,15 +18,45 @@ namespace Keeper.Core
             var command = new Command(args);
             
             await MigrateDatabaseAsync();
+
+            var tasks = new List<Task>();
             
             if (command.UpdateNfl)
             {
-                await UpdateNflAsync();
+                tasks.Add(UpdateNflAsync());
             }
+
+            if (command.UpdateSleeper)
+            {
+                tasks.Add(UpdateSleeperAsync());
+            }
+
+            if (tasks.Any())
+            {
+                await Task.WhenAll(tasks);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Error.WriteLine("No arguments were passed in");
+                Console.ResetColor();
+            }
+        }
+
+        private static Task UpdateSleeperAsync()
+        {
+            Console.WriteLine("Updating Sleeper data...");
+            var stopwatch = Stopwatch.StartNew();
+            stopwatch.Stop();
+            Console.WriteLine($"Updating Sleeper data... Done! Completed in {stopwatch.ElapsedMilliseconds} ms.");
+            return Task.CompletedTask;
         }
 
         private static async Task UpdateNflAsync()
         {
+            Console.WriteLine("Updating NFL data...");
+            var stopwatch = Stopwatch.StartNew();
+
             using var httpClient = new HttpClient();
             var fantasyClient = new FantasyClient(httpClient);
 
@@ -76,6 +109,7 @@ namespace Keeper.Core
                         await dbContext.SaveChangesAsync();
                     }
 
+                    // TODO: need to support updating previously saved data
                     if (x.Statistics.Kicking != null && !await dbContext.NflKickingStatistics.AnyAsync(p =>
                         p.PlayerId == x.Id && p.Season == x.Season && p.Week == x.Week))
                     {
@@ -153,6 +187,9 @@ namespace Keeper.Core
                 });
 
             await Task.WhenAll(databaseTasks);
+
+            stopwatch.Stop();
+            Console.WriteLine($"Updating NFL data... Done! Completed in {stopwatch.ElapsedMilliseconds} ms.");
         }
 
         private static async Task MigrateDatabaseAsync()

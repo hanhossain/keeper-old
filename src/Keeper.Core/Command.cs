@@ -7,8 +7,11 @@ namespace Keeper.Core
         public Command(string[] args)
         {
             UpdateNfl = args.Contains("--update-nfl");
+            UpdateSleeper = args.Contains("--update-sleeper");
         }
 
         public bool UpdateNfl { get; }
+
+        public bool UpdateSleeper { get; }
     }
 }
