@@ -18,7 +18,7 @@ namespace Keeper.Core.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=/Users/hanhossain/Developer/keeper/src/keeper.sqlite");
+            optionsBuilder.UseSqlite("Data Source=/Users/hanhossain/Developer/keeper/src/data/keeper.sqlite");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
