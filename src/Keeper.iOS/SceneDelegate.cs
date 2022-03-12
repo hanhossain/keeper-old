@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Net.Http;
 using Foundation;
+using Keeper.Core.Sleeper;
 using UIKit;
 
 namespace Keeper.iOS
@@ -7,6 +8,8 @@ namespace Keeper.iOS
     [Register ("SceneDelegate")]
     public class SceneDelegate : UIResponder, IUIWindowSceneDelegate
     {
+        private readonly HttpClient _httpClient = new HttpClient();
+        private bool _disposed = false;
 
         [Export ("window")]
         public UIWindow Window { get; set; }
@@ -19,12 +22,15 @@ namespace Keeper.iOS
             // This delegate does not imply the connecting scene or session are new (see UIApplicationDelegate `GetConfiguration` instead).
             if (scene is UIWindowScene windowScene)
             {
+                var sleeperClient = new SleeperClient(_httpClient);
+                var viewController = new PlayersTableViewController(sleeperClient)
+                {
+                    View = { BackgroundColor = UIColor.SystemBlueColor }
+                };
+
                 Window = new UIWindow(windowScene)
                 {
-                    RootViewController = new UINavigationController(new UIViewController()
-                    {
-                        View = { BackgroundColor = UIColor.SystemBlueColor }
-                    })
+                    RootViewController = new UINavigationController(viewController)
                 };
                 Window.MakeKeyAndVisible();
             }
@@ -66,6 +72,21 @@ namespace Keeper.iOS
             // Called as the scene transitions from the foreground to the background.
             // Use this method to save data, release shared resources, and store enough scene-specific state information
             // to restore the scene back to its current state.
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _httpClient.Dispose();
+                }
+
+                _disposed = true;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

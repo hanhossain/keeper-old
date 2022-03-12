@@ -20,8 +20,13 @@
       <None Remove="Database\" />
       <None Remove="Microsoft.EntityFrameworkCore.Sqlite" />
       <None Remove="Microsoft.EntityFrameworkCore.Design" />
+      <None Remove="Sleeper\" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Database\" />
+      <Folder Include="Sleeper\" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Keeper.Core\Keeper.Core.csproj" />
     </ItemGroup>
 </Project>

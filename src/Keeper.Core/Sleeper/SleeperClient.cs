@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Keeper.ConsoleApp.Sleeper
+namespace Keeper.Core.Sleeper
 {
     public sealed class SleeperClient : ISleeperClient
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Keeper.ConsoleApp.Sleeper
+namespace Keeper.Core.Sleeper
 {
     public interface ISleeperClient
     {
