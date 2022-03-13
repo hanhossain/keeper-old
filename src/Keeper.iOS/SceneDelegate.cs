@@ -1,6 +1,11 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
 using Foundation;
+using Keeper.Core.Database;
 using Keeper.Core.Sleeper;
+using Microsoft.EntityFrameworkCore;
 using UIKit;
 
 namespace Keeper.iOS
@@ -22,11 +27,23 @@ namespace Keeper.iOS
             // This delegate does not imply the connecting scene or session are new (see UIApplicationDelegate `GetConfiguration` instead).
             if (scene is UIWindowScene windowScene)
             {
-                var sleeperClient = new SleeperClient(_httpClient);
-                var viewController = new PlayersTableViewController(sleeperClient)
+                using (var context = new DatabaseContext())
                 {
-                    View = { BackgroundColor = UIColor.SystemBlueColor }
-                };
+                    var pendingMigrations = context.Database.GetPendingMigrations();
+
+                    if (pendingMigrations.Any())
+                    {
+                        Console.WriteLine("Migrating database...");
+                        var stopwatch = Stopwatch.StartNew();
+
+                        context.Database.Migrate();
+                        stopwatch.Stop();
+                        Console.WriteLine($"Migrating database... Done! Completed in {stopwatch.ElapsedMilliseconds} ms.");
+                    }
+                }
+
+                var sleeperClient = new SleeperClient(_httpClient);
+                var viewController = new PlayersTableViewController(sleeperClient);
 
                 Window = new UIWindow(windowScene)
                 {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Keeper.Core.Sleeper
+namespace Keeper.Core.Sleeper.Models
 {
     public class SleeperUser
     {

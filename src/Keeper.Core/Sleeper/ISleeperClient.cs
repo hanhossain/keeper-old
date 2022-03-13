@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Keeper.Core.Sleeper.Models;
 
 namespace Keeper.Core.Sleeper
 {
