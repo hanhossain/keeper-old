@@ -43,7 +43,8 @@ namespace Keeper.iOS
                 }
 
                 var sleeperClient = new SleeperClient(_httpClient);
-                var viewController = new PlayersTableViewController(sleeperClient);
+                var userDefaults = new UserDefaults();
+                var viewController = new PlayersTableViewController(sleeperClient, userDefaults);
 
                 Window = new UIWindow(windowScene)
                 {

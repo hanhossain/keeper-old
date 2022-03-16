@@ -14,12 +14,16 @@ namespace Keeper.iOS
     public class PlayersTableViewController : UITableViewController
     {
         private const string CellId = nameof(PlayersTableViewController);
+
         private readonly ISleeperClient _sleeperClient;
+        private readonly IUserDefaults _userDefaults;
+
         private List<SleeperPlayer> _players = new List<SleeperPlayer>();
 
-        public PlayersTableViewController(ISleeperClient sleeperClient)
+        public PlayersTableViewController(ISleeperClient sleeperClient, IUserDefaults userDefaults)
         {
             _sleeperClient = sleeperClient;
+            _userDefaults = userDefaults;
         }
 
         public async override void ViewDidLoad()
@@ -32,9 +36,62 @@ namespace Keeper.iOS
 
             var stopwatch = new Stopwatch();
 
-            if (!await context.SleeperPlayers.AnyAsync())
+            var nextUpdateTime = _userDefaults.SleeperLastUpdated + TimeSpan.FromDays(1);
+            Console.WriteLine($"Sleeper last update time: {_userDefaults.SleeperLastUpdated}");
+            Console.WriteLine($"Sleeper next update time: {nextUpdateTime}");
+
+            if (nextUpdateTime <= DateTime.Now)
             {
+                Console.WriteLine("Updating players");
                 stopwatch.Start();
+                var sleeperPlayers = await _sleeperClient.GetPlayersAsync();
+                stopwatch.Stop();
+                Console.WriteLine($"Received sleeper players in {stopwatch.ElapsedMilliseconds} ms");
+
+                stopwatch.Restart();
+                foreach (var sleeperPlayer in sleeperPlayers.Values)
+                {
+                    var dbPlayer = await context.SleeperPlayers.FindAsync(sleeperPlayer.PlayerId);
+
+                    if (dbPlayer == null)
+                    {
+                        dbPlayer = new SleeperPlayer()
+                        {
+                            Active = sleeperPlayer.Active,
+                            FirstName = sleeperPlayer.FirstName,
+                            LastName = sleeperPlayer.LastName,
+                            FullName = $"{sleeperPlayer.FirstName} {sleeperPlayer.LastName}",
+                            Id = sleeperPlayer.PlayerId,
+                            Position = sleeperPlayer.Position,
+                            Status = sleeperPlayer.Status,
+                            Team = sleeperPlayer.Team
+                        };
+
+                        context.SleeperPlayers.Add(dbPlayer);
+                    }
+                    else
+                    {
+                        dbPlayer.Active = sleeperPlayer.Active;
+                        dbPlayer.FirstName = sleeperPlayer.FirstName;
+                        dbPlayer.LastName = sleeperPlayer.LastName;
+                        dbPlayer.FullName = $"{sleeperPlayer.FirstName} {sleeperPlayer.LastName}";
+                        dbPlayer.Position = sleeperPlayer.Position;
+                        dbPlayer.Status = sleeperPlayer.Status;
+                        dbPlayer.Team = sleeperPlayer.Team;
+                    }
+                }
+
+                await context.SaveChangesAsync();
+
+                stopwatch.Stop();
+                Console.WriteLine($"Updated sleeper players in {stopwatch.ElapsedMilliseconds} ms");
+
+                _userDefaults.SleeperLastUpdated = DateTime.Now;
+            }
+            else if (!await context.SleeperPlayers.AnyAsync())
+            {
+                Console.WriteLine("No players found. Loading players.");
+                stopwatch.Restart();
                 var sleeperPlayers = await _sleeperClient.GetPlayersAsync();
                 stopwatch.Stop();
                 Console.WriteLine($"Received sleeper players in {stopwatch.ElapsedMilliseconds} ms");
@@ -62,7 +119,7 @@ namespace Keeper.iOS
                 Console.WriteLine($"Saved sleeper players in {stopwatch.ElapsedMilliseconds} ms");
             }
 
-            stopwatch.Start();
+            stopwatch.Restart();
             _players = await context.SleeperPlayers
                 .OrderBy(x => x.LastName)
                 .ThenBy(x => x.FirstName)
