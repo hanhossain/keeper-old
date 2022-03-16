@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Foundation;
-using Keeper.Core;
 using Keeper.Core.Database;
 using Keeper.Core.Sleeper;
-using Microsoft.EntityFrameworkCore;
 using UIKit;
 
 namespace Keeper.iOS
@@ -18,7 +16,8 @@ namespace Keeper.iOS
         private readonly ISleeperCache _sleeperCache;
         private readonly IUserDefaults _userDefaults;
 
-        private List<SleeperPlayer> _players = new List<SleeperPlayer>();
+        private Dictionary<char, List<SleeperPlayer>> _players = new Dictionary<char, List<SleeperPlayer>>();
+        private List<char> _sections = new List<char>();
 
         public PlayersTableViewController(ISleeperCache sleeperCache, IUserDefaults userDefaults)
         {
@@ -46,7 +45,18 @@ namespace Keeper.iOS
                 _userDefaults.SleeperLastUpdated = DateTime.Now;
             }
 
-            _players = await _sleeperCache.GetPlayersAsync();
+            var players = await _sleeperCache.GetPlayersAsync();
+            _players = players
+                .GroupBy(x =>
+                {
+                    char firstLetter = char.ToUpper(x.LastName.First());
+                    return char.IsDigit(firstLetter) ? '#' : firstLetter;
+                })
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList());
+            _sections = _players.Keys.OrderBy(x => x).ToList();
+
             TableView.ReloadData();
         }
 
@@ -54,14 +64,29 @@ namespace Keeper.iOS
         {
             var cell = TableView.DequeueReusableCell(CellId, indexPath);
 
-            cell.TextLabel.Text = _players[indexPath.Row].FullName;
+            var section = _sections[indexPath.Section];
+            var player = _players[section][indexPath.Row];
+            cell.TextLabel.Text = player.FullName;
 
             return cell;
         }
 
+        public override nint NumberOfSections(UITableView tableView)
+        {
+            return _sections.Count;
+        }
+
         public override nint RowsInSection(UITableView tableView, nint section)
         {
-            return _players.Count;
+            var sectionId = _sections[(int)section];
+            return _players[sectionId].Count;
+        }
+
+        public override string[] SectionIndexTitles(UITableView tableView)
+        {
+            return _sections
+                .Select(x => x.ToString())
+                .ToArray();
         }
     }
 }
