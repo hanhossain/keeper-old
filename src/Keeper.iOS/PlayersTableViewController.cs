@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Foundation;
 using Keeper.Core.Database;
 using Keeper.Core.Sleeper;
@@ -30,14 +31,29 @@ namespace Keeper.iOS
             base.ViewDidLoad();
             View.BackgroundColor = UIColor.SystemBackgroundColor;
             TableView.RegisterClassForCellReuse<UITableViewCell>(CellId);
+            RefreshControl = new UIRefreshControl()
+            {
+                AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}")
+            };
+            RefreshControl.ValueChanged += (object sender, EventArgs e) =>
+            {
+                _ = Task.Run(async () =>
+                {
+                    await _sleeperCache.RefreshPlayersAsync();
+                    _userDefaults.SleeperLastUpdated = DateTime.Now;
+                    InvokeOnMainThread(() =>
+                    {
+                        RefreshControl.AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}");
+                        RefreshControl.EndRefreshing();
+                    });
+                });
+            };
 
             await using var context = new DatabaseContext();
 
             var stopwatch = new Stopwatch();
 
             var nextUpdateTime = _userDefaults.SleeperLastUpdated + TimeSpan.FromDays(1);
-            Console.WriteLine($"Sleeper last update time: {_userDefaults.SleeperLastUpdated}");
-            Console.WriteLine($"Sleeper next update time: {nextUpdateTime}");
 
             if (nextUpdateTime <= DateTime.Now)
             {
