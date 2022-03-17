@@ -54,6 +54,7 @@ namespace Keeper.Core.Sleeper
         {
             await using var dbContext = new DatabaseContext();
             return await dbContext.SleeperPlayers
+                .Where(x => x.Active)
                 .OrderBy(x => x.LastName)
                 .OrderBy(x => x.FirstName)
                 .ToListAsync();
