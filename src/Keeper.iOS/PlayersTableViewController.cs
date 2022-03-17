@@ -9,15 +9,18 @@ using UIKit;
 
 namespace Keeper.iOS
 {
-    public class PlayersTableViewController : UITableViewController
+    public class PlayersTableViewController : UITableViewController, IUISearchResultsUpdating
     {
         private const string CellId = nameof(PlayersTableViewController);
 
         private readonly ISleeperCache _sleeperCache;
         private readonly IUserDefaults _userDefaults;
 
+        private List<SleeperPlayer> _allPlayers = new List<SleeperPlayer>();
         private Dictionary<char, List<SleeperPlayer>> _players = new Dictionary<char, List<SleeperPlayer>>();
         private List<char> _sections = new List<char>();
+
+        private string _filter = string.Empty;
 
         public PlayersTableViewController(ISleeperCache sleeperCache, IUserDefaults userDefaults)
         {
@@ -48,6 +51,13 @@ namespace Keeper.iOS
                 });
             };
 
+            NavigationItem.SearchController = new UISearchController()
+            {
+                SearchResultsUpdater = this,
+                ObscuresBackgroundDuringPresentation = false,
+                SearchBar = { Placeholder = "Search for a player" }
+            };
+
             await using var context = new DatabaseContext();
 
             var stopwatch = new Stopwatch();
@@ -60,19 +70,8 @@ namespace Keeper.iOS
                 _userDefaults.SleeperLastUpdated = DateTime.Now;
             }
 
-            var players = await _sleeperCache.GetPlayersAsync();
-            _players = players
-                .GroupBy(x =>
-                {
-                    char firstLetter = char.ToUpper(x.LastName.First());
-                    return char.IsDigit(firstLetter) ? '#' : firstLetter;
-                })
-                .ToDictionary(
-                    x => x.Key,
-                    x => x.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList());
-            _sections = _players.Keys.OrderBy(x => x).ToList();
-
-            TableView.ReloadData();
+            _allPlayers = await _sleeperCache.GetPlayersAsync();
+            UpdatePlayersAndSections();
         }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -102,6 +101,28 @@ namespace Keeper.iOS
             return _sections
                 .Select(x => x.ToString())
                 .ToArray();
+        }
+
+        public void UpdateSearchResultsForSearchController(UISearchController searchController)
+        {
+            _filter = searchController.SearchBar.Text;
+            UpdatePlayersAndSections();
+        }
+
+        private void UpdatePlayersAndSections()
+        {
+            _players = _allPlayers
+                .Where(x => x.FullName.Contains(_filter, StringComparison.CurrentCultureIgnoreCase))
+                .GroupBy(x =>
+                {
+                    char firstLetter = char.ToUpper(x.LastName.First());
+                    return char.IsDigit(firstLetter) ? '#' : firstLetter;
+                })
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList());
+            _sections = _players.Keys.OrderBy(x => x).ToList();
+            TableView.ReloadData();
         }
     }
 }
