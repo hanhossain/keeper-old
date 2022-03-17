@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Keeper.Core.Database;
 
-namespace Keeper.Core.Sleeper
+namespace Keeper.Core.Database
 {
     public interface ISleeperCache
     {

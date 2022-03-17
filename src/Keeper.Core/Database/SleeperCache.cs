@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Keeper.Core.Database;
+using Keeper.Core.Sleeper;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keeper.Core.Sleeper
+namespace Keeper.Core.Database
 {
     public class SleeperCache : ISleeperCache
     {
