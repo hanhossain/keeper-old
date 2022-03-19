@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Keeper.Core.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.Core.Database

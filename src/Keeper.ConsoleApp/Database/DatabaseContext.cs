@@ -1,4 +1,5 @@
 ﻿using Keeper.Core.Database;
+using Keeper.Core.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.ConsoleApp.Database

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keeper.Core.Database.Models;
 using Keeper.Core.Sleeper;
 using Microsoft.EntityFrameworkCore;
 

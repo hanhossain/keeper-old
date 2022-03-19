@@ -5,11 +5,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
+using Keeper.Core.Database.Models;
 using Keeper.Core.Nfl;
+using Keeper.Core.Nfl.Models;
 using Keeper.Core.Sleeper;
 using Microsoft.EntityFrameworkCore;
 using DatabaseContext = Keeper.ConsoleApp.Database.DatabaseContext;
-using NflPlayer = Keeper.Core.Database.NflPlayer;
+using NflPlayer = Keeper.Core.Database.Models.NflPlayer;
 using SleeperPlayer = Keeper.ConsoleApp.Database.SleeperPlayer;
 
 namespace Keeper.ConsoleApp

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Keeper.Core.Nfl.Models;
 
 namespace Keeper.Core.Nfl
 {

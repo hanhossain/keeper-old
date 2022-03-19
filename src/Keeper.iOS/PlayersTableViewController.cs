@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
 using Keeper.Core.Database;
+using Keeper.Core.Database.Models;
 using UIKit;
 
 namespace Keeper.iOS

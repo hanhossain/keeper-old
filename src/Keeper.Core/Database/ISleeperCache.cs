@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Keeper.Core.Database.Models;
 
 namespace Keeper.Core.Database
 {

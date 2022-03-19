@@ -1,4 +1,4 @@
-﻿namespace Keeper.Core.Nfl
+﻿namespace Keeper.Core.Nfl.Models
 {
     public enum NflLocation
     {

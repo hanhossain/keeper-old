@@ -16,7 +16,7 @@ namespace Keeper.Core.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.15");
 
-            modelBuilder.Entity("Keeper.Core.Database.NflDefensiveStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflDefensiveStatistics", b =>
                 {
                     b.Property<int>("PlayerId")
                         .HasColumnType("INTEGER");
@@ -56,7 +56,7 @@ namespace Keeper.Core.Migrations
                     b.ToTable("NflDefensiveStatistics");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflKickingStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflKickingStatistics", b =>
                 {
                     b.Property<int>("PlayerId")
                         .HasColumnType("INTEGER");
@@ -90,7 +90,7 @@ namespace Keeper.Core.Migrations
                     b.ToTable("NflKickingStatistics");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflOffensiveStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflOffensiveStatistics", b =>
                 {
                     b.Property<int>("PlayerId")
                         .HasColumnType("INTEGER");
@@ -142,7 +142,7 @@ namespace Keeper.Core.Migrations
                     b.ToTable("NflOffensiveStatistics");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflPlayer", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflPlayer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -162,7 +162,7 @@ namespace Keeper.Core.Migrations
                     b.ToTable("NflPlayers");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflPlayerStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflPlayerStatistics", b =>
                 {
                     b.Property<int>("PlayerId")
                         .HasColumnType("INTEGER");
@@ -181,7 +181,7 @@ namespace Keeper.Core.Migrations
                     b.ToTable("NflPlayerStatistics");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.SleeperPlayer", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.SleeperPlayer", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -212,9 +212,9 @@ namespace Keeper.Core.Migrations
                     b.ToTable("SleeperPlayers");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflDefensiveStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflDefensiveStatistics", b =>
                 {
-                    b.HasOne("Keeper.Core.Database.NflPlayer", "Player")
+                    b.HasOne("Keeper.Core.Database.Models.NflPlayer", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -223,9 +223,9 @@ namespace Keeper.Core.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflKickingStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflKickingStatistics", b =>
                 {
-                    b.HasOne("Keeper.Core.Database.NflPlayer", "Player")
+                    b.HasOne("Keeper.Core.Database.Models.NflPlayer", "Player")
                         .WithMany("NflKickingStatistics")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -234,9 +234,9 @@ namespace Keeper.Core.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflOffensiveStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflOffensiveStatistics", b =>
                 {
-                    b.HasOne("Keeper.Core.Database.NflPlayer", "Player")
+                    b.HasOne("Keeper.Core.Database.Models.NflPlayer", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -245,9 +245,9 @@ namespace Keeper.Core.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflPlayerStatistics", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflPlayerStatistics", b =>
                 {
-                    b.HasOne("Keeper.Core.Database.NflPlayer", "Player")
+                    b.HasOne("Keeper.Core.Database.Models.NflPlayer", "Player")
                         .WithMany("PlayerStatistics")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -256,7 +256,7 @@ namespace Keeper.Core.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("Keeper.Core.Database.NflPlayer", b =>
+            modelBuilder.Entity("Keeper.Core.Database.Models.NflPlayer", b =>
                 {
                     b.Navigation("NflKickingStatistics");
 

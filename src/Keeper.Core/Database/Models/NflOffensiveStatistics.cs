@@ -1,4 +1,4 @@
-namespace Keeper.Core.Database
+namespace Keeper.Core.Database.Models
 {
     public class NflOffensiveStatistics
     {
