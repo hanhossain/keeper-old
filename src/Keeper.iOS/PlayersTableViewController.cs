@@ -83,6 +83,14 @@ namespace Keeper.iOS
             return cell;
         }
 
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+            var section = _sections[indexPath.Section];
+            var player = _players[section][indexPath.Row];
+            Console.WriteLine($"Player: {player.FullName}, Position: {player.Position}, Team: {player.Team}");
+            TableView.DeselectRow(indexPath, true);
+        }
+
         public override nint NumberOfSections(UITableView tableView)
         {
             return _sections.Count;
