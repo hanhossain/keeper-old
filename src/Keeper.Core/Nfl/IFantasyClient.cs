@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Keeper.ConsoleApp.Nfl
+namespace Keeper.Core.Nfl
 {
     public interface IFantasyClient
     {

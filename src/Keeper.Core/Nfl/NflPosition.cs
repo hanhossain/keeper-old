@@ -1,4 +1,4 @@
-namespace Keeper.ConsoleApp.Nfl
+namespace Keeper.Core.Nfl
 {
     public enum NflPosition
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Keeper.ConsoleApp.Database;
-using Keeper.ConsoleApp.Nfl;
+using Keeper.Core.Nfl;
 using Keeper.Core.Sleeper;
 using Microsoft.EntityFrameworkCore;
 using NflPlayer = Keeper.ConsoleApp.Database.NflPlayer;

@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp;
 
-namespace Keeper.ConsoleApp.Nfl
+namespace Keeper.Core.Nfl
 {
     public class FantasyClient : IFantasyClient
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Keeper.ConsoleApp.Nfl
+namespace Keeper.Core.Nfl
 {
     public class NflResult
     {

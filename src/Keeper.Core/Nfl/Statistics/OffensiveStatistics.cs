@@ -1,6 +1,6 @@
 using AngleSharp.Dom;
 
-namespace Keeper.ConsoleApp.Nfl.Statistics
+namespace Keeper.Core.Nfl.Statistics
 {
     public class OffensiveStatistics
     {
