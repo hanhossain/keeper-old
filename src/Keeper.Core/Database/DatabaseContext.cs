@@ -15,7 +15,7 @@ namespace Keeper.Core.Database
 
             // found path from:
             // https://stackoverflow.com/questions/47237414/what-is-the-best-environment-specialfolder-for-store-application-data-in-xamarin
-            string databasePath = Path.Combine(
+            var databasePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "..",
                 "Library",

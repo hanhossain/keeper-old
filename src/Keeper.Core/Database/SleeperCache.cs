@@ -56,7 +56,7 @@ namespace Keeper.Core.Database
             return await dbContext.SleeperPlayers
                 .Where(x => x.Active)
                 .OrderBy(x => x.LastName)
-                .OrderBy(x => x.FirstName)
+                .ThenBy(x => x.FirstName)
                 .ToListAsync();
         }
     }

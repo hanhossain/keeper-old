@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Foundation;
@@ -28,7 +27,7 @@ namespace Keeper.iOS
             _userDefaults = userDefaults;
         }
 
-        public async override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
             View.BackgroundColor = UIColor.SystemBackgroundColor;
@@ -37,7 +36,7 @@ namespace Keeper.iOS
             {
                 AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}")
             };
-            RefreshControl.ValueChanged += (object sender, EventArgs e) =>
+            RefreshControl.ValueChanged += (sender, e) =>
             {
                 _ = Task.Run(async () =>
                 {
@@ -59,9 +58,7 @@ namespace Keeper.iOS
             };
 
             await using var context = new DatabaseContext();
-
-            var stopwatch = new Stopwatch();
-
+            
             var nextUpdateTime = _userDefaults.SleeperLastUpdated + TimeSpan.FromDays(1);
 
             if (nextUpdateTime <= DateTime.Now)
@@ -120,7 +117,7 @@ namespace Keeper.iOS
                 })
                 .ToDictionary(
                     x => x.Key,
-                    x => x.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList());
+                    x => x.OrderBy(y => y.LastName).ThenBy(y => y.FirstName).ToList());
             _sections = _players.Keys.OrderBy(x => x).ToList();
             TableView.ReloadData();
         }
