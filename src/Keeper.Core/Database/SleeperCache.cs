@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keeper.Core.Database.Models;
@@ -53,8 +54,11 @@ namespace Keeper.Core.Database
 
         public async Task<List<SleeperPlayer>> GetPlayersAsync()
         {
+            var positions = new HashSet<string>() { "QB", "RB", "WR", "TE", "K", "DEF" };
+
             await using var dbContext = new DatabaseContext();
             return await dbContext.SleeperPlayers
+                .Where(x => positions.Contains(x.Position))
                 .Where(x => x.Active)
                 .OrderBy(x => x.LastName)
                 .ThenBy(x => x.FirstName)
