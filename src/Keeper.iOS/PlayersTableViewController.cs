@@ -32,7 +32,7 @@ namespace Keeper.iOS
         {
             base.ViewDidLoad();
             View.BackgroundColor = UIColor.SystemBackgroundColor;
-            TableView.RegisterClassForCellReuse<UITableViewCell>(CellId);
+            TableView.RegisterClassForCellReuse<SubtitleTableViewCell>(CellId);
             RefreshControl = new UIRefreshControl()
             {
                 AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}")
@@ -79,6 +79,7 @@ namespace Keeper.iOS
             var section = _sections[indexPath.Section];
             var player = _players[section][indexPath.Row];
             cell.TextLabel.Text = player.FullName;
+            cell.DetailTextLabel.Text = $"{player.Position} - {player.Team}";
 
             return cell;
         }

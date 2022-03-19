@@ -148,6 +148,7 @@
         <Compile Include="AppDelegate.cs" />
         <Compile Include="SceneDelegate.cs" />
         <Compile Include="PlayersTableViewController.cs" />
+        <Compile Include="SubtitleTableViewCell.cs" />
         <Compile Include="UITableViewExtensions.cs" />
         <Compile Include="UserDefaults.cs" />
         <Compile Include="IUserDefaults.cs" />
