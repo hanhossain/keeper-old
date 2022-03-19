@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Keeper.ConsoleApp.Database
+namespace Keeper.Core.Database
 {
     public class NflPlayer
     {
