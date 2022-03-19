@@ -22,6 +22,15 @@ namespace Keeper.Core.Database
 
         public async Task RefreshStatisticsAsync()
         {
+            // TODO: need to ensure that updates are allowed
+            await using (var dbContext = new DatabaseContext())
+            {
+                if (await dbContext.NflPlayers.AnyAsync())
+                {
+                    return;
+                }
+            }
+            
             Console.WriteLine("Getting NFL Data...");
             var stopwatch = Stopwatch.StartNew();
 
