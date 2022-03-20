@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Foundation;
 using Keeper.Core.Database;
 using Keeper.Core.Database.Models;
@@ -37,19 +36,7 @@ namespace Keeper.iOS
             {
                 AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}")
             };
-            RefreshControl.ValueChanged += (sender, e) =>
-            {
-                _ = Task.Run(async () =>
-                {
-                    await _sleeperCache.RefreshPlayersAsync();
-                    _userDefaults.SleeperLastUpdated = DateTime.Now;
-                    InvokeOnMainThread(() =>
-                    {
-                        RefreshControl.AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}");
-                        RefreshControl.EndRefreshing();
-                    });
-                });
-            };
+            RefreshControl.ValueChanged += ReloadCacheAsync;
 
             NavigationItem.SearchController = new UISearchController()
             {
@@ -130,6 +117,18 @@ namespace Keeper.iOS
                     x => x.OrderBy(y => y.LastName).ThenBy(y => y.FirstName).ToList());
             _sections = _players.Keys.OrderBy(x => x).ToList();
             TableView.ReloadData();
+        }
+
+        private async void ReloadCacheAsync(object sender, EventArgs eventArgs)
+        {
+            await _sleeperCache.RefreshPlayersAsync();
+
+            _userDefaults.SleeperLastUpdated = DateTime.Now;
+            InvokeOnMainThread(() =>
+            {
+                RefreshControl.AttributedTitle = new NSAttributedString($"Last updated: {_userDefaults.SleeperLastUpdated:g}");
+                RefreshControl.EndRefreshing();
+            });
         }
     }
 }
