@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Keeper.Core.Sleeper.Models
+namespace Keeper.Synchronizer.Sleeper.Models
 {
     public class SleeperPlayer
     {

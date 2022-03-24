@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Keeper.Core.Sleeper.Models;
+using Keeper.Synchronizer.Sleeper.Models;
 
-namespace Keeper.Core.Sleeper
+namespace Keeper.Synchronizer.Sleeper
 {
     public interface ISleeperClient
     {
