@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Keeper.Core.Database.Models;
+﻿using Keeper.Core.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.Core.Database
@@ -18,10 +16,6 @@ namespace Keeper.Core.Database
         public DbSet<NflDefensiveStatistics> NflDefensiveStatistics { get; set; }
 
         public DbSet<NflOffensiveStatistics> NflOffensiveStatistics { get; set; }
-        
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

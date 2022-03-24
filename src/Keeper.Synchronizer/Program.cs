@@ -1,25 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Keeper.Synchronizer.Sleeper;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Keeper.Synchronizer
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            using var httpClient = new HttpClient();
-            var sleeperClient = new SleeperClient(httpClient);
-
-            var players = await sleeperClient.GetPlayersAsync();
-            var mahomes = players.Values.Where(x => x.LastName == "Mahomes").First();
-            Console.WriteLine($"{mahomes.FirstName} {mahomes.LastName} {mahomes.Team}");
-
-            var hill = players.Values.Where(x => x.LastName == "Hill" && x.FirstName == "Tyreek").First();
-            Console.WriteLine($"{hill.FirstName} {hill.LastName} {hill.Team}");
+            CreateHostBuilder(args).Build().Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddHostedService<Worker>();
+                });
     }
 }
 
