@@ -3,9 +3,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp;
-using Keeper.Core.Nfl.Models;
+using Keeper.Synchronizer.Nfl.Models;
 
-namespace Keeper.Core.Nfl
+namespace Keeper.Synchronizer.Nfl
 {
     public class FantasyClient : IFantasyClient
     {

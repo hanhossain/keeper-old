@@ -1,4 +1,4 @@
-namespace Keeper.Core.Nfl.Models
+namespace Keeper.Synchronizer.Nfl.Models
 {
     public enum NflPosition
     {

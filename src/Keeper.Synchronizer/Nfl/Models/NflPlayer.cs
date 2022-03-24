@@ -1,8 +1,8 @@
 using System.Linq;
 using AngleSharp.Dom;
-using Keeper.Core.Nfl.Models.Statistics;
+using Keeper.Synchronizer.Nfl.Models.Statistics;
 
-namespace Keeper.Core.Nfl.Models
+namespace Keeper.Synchronizer.Nfl.Models
 {
     public class NflPlayer
     {

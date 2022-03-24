@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
 
-namespace Keeper.Core.Nfl.Models.Statistics
+namespace Keeper.Synchronizer.Nfl.Models.Statistics
 {
     public class PassingStatistics
     {

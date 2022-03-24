@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Keeper.Core.Nfl.Models
+namespace Keeper.Synchronizer.Nfl.Models
 {
     public class NflResult
     {

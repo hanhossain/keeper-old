@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Keeper.Core.Nfl.Models;
+using Keeper.Synchronizer.Nfl.Models;
 
-namespace Keeper.Core.Nfl
+namespace Keeper.Synchronizer.Nfl
 {
     public interface IFantasyClient
     {
