@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keeper.Core.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,6 +21,8 @@ namespace Keeper.Synchronizer
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddDbContext<DatabaseContext>(options =>
+                        options.UseSqlServer(hostContext.Configuration.GetConnectionString("DatabaseContext")));
                     services.AddHostedService<Worker>();
                 });
     }

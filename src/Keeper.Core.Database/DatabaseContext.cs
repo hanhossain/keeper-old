@@ -5,6 +5,11 @@ namespace Keeper.Core.Database
 {
     public class DatabaseContext : DbContext
     {
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options)
+        {
+        }
+        
         public DbSet<SleeperPlayer> SleeperPlayers { get; set; }
         
         public DbSet<NflPlayer> NflPlayers { get; set; }
