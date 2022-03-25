@@ -77,7 +77,7 @@ namespace Keeper.Synchronizer
                         dbPlayer.Team = player.Team;
                         dbPlayer.FirstName = player.FirstName;
                         dbPlayer.LastName = player.LastName;
-                        dbPlayer.FullName = $"{player.FirstName} ${player.LastName}";
+                        dbPlayer.FullName = $"{player.FirstName} {player.LastName}";
                     }
 
                     await databaseContext.SaveChangesAsync(stoppingToken);
