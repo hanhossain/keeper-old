@@ -23,7 +23,7 @@ namespace Keeper.Synchronizer
         private readonly ISleeperClient _sleeperClient;
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
-        private readonly TimeSpan _sleeperUpdatePeriod = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _sleeperUpdatePeriod = TimeSpan.FromDays(1);
 
         public Worker(ILogger<Worker> logger, ISleeperClient sleeperClient, IServiceProvider serviceProvider, IConfiguration configuration)
         {
