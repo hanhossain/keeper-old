@@ -19,7 +19,7 @@ namespace Keeper.Synchronizer
     public class SleeperRefreshWorker : BackgroundService
     {
         private const string SleeperLastUpdatedKey = "SleeperLastUpdated";
-        
+
         private readonly ILogger<SleeperRefreshWorker> _logger;
         private readonly ISleeperClient _sleeperClient;
         private readonly IServiceProvider _serviceProvider;
@@ -39,7 +39,7 @@ namespace Keeper.Synchronizer
             _redis = redis;
             _activitySource = activitySource;
         }
-        
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await MigrateDatabaseAsync(stoppingToken);
@@ -57,14 +57,14 @@ namespace Keeper.Synchronizer
         {
             using var activity = _activitySource.StartActivity();
             await using var scope = _serviceProvider.CreateAsyncScope();
-            
+
             var redisDatabase = _redis.GetDatabase();
             string rawSleeperLastUpdated = await redisDatabase.StringGetAsync(SleeperLastUpdatedKey);
             var sleeperLastUpdated = string.IsNullOrEmpty(rawSleeperLastUpdated)
                 ? DateTime.MinValue
                 : DateTime.Parse(rawSleeperLastUpdated);
             var nextUpdate = sleeperLastUpdated.Add(_sleeperUpdatePeriod);
-                
+
             _logger.LogInformation("Sleeper last updated at [{}]. Sleeper next update at [{}]", sleeperLastUpdated, nextUpdate);
 
             if (nextUpdate <= DateTime.Now)
@@ -99,14 +99,14 @@ namespace Keeper.Synchronizer
                 await databaseContext.SaveChangesAsync(cancellationToken);
                 var lastUpdated = DateTime.Now;
                 nextUpdate = lastUpdated.Add(_sleeperUpdatePeriod);
-            
+
                 await redisDatabase.StringSetAsync(SleeperLastUpdatedKey, lastUpdated.ToString("O"));
                 _logger.LogInformation("Added/updated all players in database. Next update will be at [{}]", nextUpdate);
             }
 
             return nextUpdate;
         }
-        
+
         private async Task MigrateDatabaseAsync(CancellationToken cancellationToken)
         {
             await using var scope = _serviceProvider.CreateAsyncScope();
