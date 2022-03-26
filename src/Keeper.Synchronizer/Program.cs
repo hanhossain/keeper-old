@@ -16,7 +16,21 @@ namespace Keeper.Synchronizer
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            MigrateDatabase(host);
+            
+            host.Run();
+        }
+
+        private static void MigrateDatabase(IHost host)
+        {
+            using var scope = host.Services.CreateScope();
+            var activitySource = scope.ServiceProvider.GetRequiredService<ActivitySource>();
+            using var activity = activitySource.StartActivity();
+
+            using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            databaseContext.Database.Migrate();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>

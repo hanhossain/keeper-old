@@ -41,8 +41,6 @@ namespace Keeper.Synchronizer
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await MigrateDatabaseAsync(stoppingToken);
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 var nextUpdate = await UpdateSleeperPlayersIfNeededAsync(stoppingToken);
@@ -100,14 +98,6 @@ namespace Keeper.Synchronizer
             }
 
             return nextUpdate;
-        }
-
-        private async Task MigrateDatabaseAsync(CancellationToken cancellationToken)
-        {
-            await using var scope = _serviceProvider.CreateAsyncScope();
-            using var migrationActivity = _activitySource.StartActivity();
-            await using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-            await databaseContext.Database.MigrateAsync(cancellationToken);
         }
     }
 }
