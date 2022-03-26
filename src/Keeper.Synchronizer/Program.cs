@@ -22,28 +22,24 @@ namespace Keeper.Synchronizer
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    var serviceName = "keeper.synchronizer";
-                    var serviceVersion = "1.0.0";
-                    
+                    var serviceName = "keeper-synchronizer";
                     var config = hostContext.Configuration;
-                    
+
                     // Configure OpenTelemetry
                     services.AddOpenTelemetryTracing(builder =>
                         builder
                             .AddJaegerExporter(options => options.AgentHost = config.GetConnectionString("Jaeger"))
                             .AddSource(serviceName)
-                            .SetResourceBuilder(
-                                ResourceBuilder.CreateDefault()
-                                    .AddService(serviceName, serviceVersion: serviceVersion))
+                            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
                             .AddHttpClientInstrumentation()
                             .AddAspNetCoreInstrumentation()
                             .AddSqlClientInstrumentation()
                             .AddRedisInstrumentation());
 
                     services.AddSingleton<ActivitySource, ActivitySource>(_ => new ActivitySource(serviceName));
-                    
+
                     services.AddHttpClient<ISleeperClient, SleeperClient>();
-                    
+
                     services.AddDbContext<DatabaseContext>(options =>
                         options.UseSqlServer(config.GetConnectionString("DatabaseContext")));
                     services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(
