@@ -15,28 +15,27 @@ namespace Keeper.Synchronizer
 {
     // TODO: turn this into a timer based background task instead
     // TODO: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-6.0&tabs=visual-studio#timed-background-tasks
-    public class Worker : BackgroundService
+    public class SleeperRefreshWorker : BackgroundService
     {
         private const string SleeperLastUpdatedKey = "SleeperLastUpdated";
         
-        private readonly ILogger<Worker> _logger;
+        private readonly ILogger<SleeperRefreshWorker> _logger;
         private readonly ISleeperClient _sleeperClient;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IConfiguration _configuration;
+        private readonly IConnectionMultiplexer _redis;
         private readonly TimeSpan _sleeperUpdatePeriod = TimeSpan.FromDays(1);
 
-        public Worker(ILogger<Worker> logger, ISleeperClient sleeperClient, IServiceProvider serviceProvider, IConfiguration configuration)
+        public SleeperRefreshWorker(ILogger<SleeperRefreshWorker> logger, ISleeperClient sleeperClient, IServiceProvider serviceProvider, IConnectionMultiplexer redis)
         {
             _logger = logger;
             _sleeperClient = sleeperClient;
             _serviceProvider = serviceProvider;
-            _configuration = configuration;
+            _redis = redis;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var redis = await ConnectionMultiplexer.ConnectAsync(_configuration.GetConnectionString("Redis"));
-            var redisDatabase = redis.GetDatabase();
+            var redisDatabase = _redis.GetDatabase();
 
             await using var scope = _serviceProvider.CreateAsyncScope();
             await using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();

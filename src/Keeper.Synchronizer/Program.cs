@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 
 namespace Keeper.Synchronizer
 {
@@ -14,15 +15,19 @@ namespace Keeper.Synchronizer
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
                     var config = hostContext.Configuration;
+                    services.AddHttpClient<ISleeperClient, SleeperClient>();
+                    
                     services.AddDbContext<DatabaseContext>(options =>
                         options.UseSqlServer(config.GetConnectionString("DatabaseContext")));
-                    services.AddHttpClient<ISleeperClient, SleeperClient>();
-                    services.AddHostedService<Worker>();
+                    services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(
+                        _ => ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")));
+
+                    services.AddHostedService<SleeperRefreshWorker>();
                 });
     }
 }
