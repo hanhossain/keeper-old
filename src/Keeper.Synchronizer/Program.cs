@@ -1,9 +1,12 @@
-﻿using Keeper.Core.Database;
+﻿using System.Diagnostics;
+using Keeper.Core.Database;
 using Keeper.Synchronizer.Sleeper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using StackExchange.Redis;
 
 namespace Keeper.Synchronizer
@@ -19,7 +22,26 @@ namespace Keeper.Synchronizer
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    var serviceName = "keeper.synchronizer";
+                    var serviceVersion = "1.0.0";
+                    
                     var config = hostContext.Configuration;
+                    
+                    // Configure OpenTelemetry
+                    services.AddOpenTelemetryTracing(builder =>
+                        builder
+                            .AddJaegerExporter(options => options.AgentHost = config.GetConnectionString("Jaeger"))
+                            .AddSource(serviceName)
+                            .SetResourceBuilder(
+                                ResourceBuilder.CreateDefault()
+                                    .AddService(serviceName, serviceVersion: serviceVersion))
+                            .AddHttpClientInstrumentation()
+                            .AddAspNetCoreInstrumentation()
+                            .AddSqlClientInstrumentation()
+                            .AddRedisInstrumentation());
+
+                    services.AddSingleton<ActivitySource, ActivitySource>(_ => new ActivitySource(serviceName));
+                    
                     services.AddHttpClient<ISleeperClient, SleeperClient>();
                     
                     services.AddDbContext<DatabaseContext>(options =>

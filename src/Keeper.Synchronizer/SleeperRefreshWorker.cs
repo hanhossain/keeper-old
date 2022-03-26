@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
 using Keeper.Core.Database.Models;
 using Keeper.Synchronizer.Sleeper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -23,14 +23,20 @@ namespace Keeper.Synchronizer
         private readonly ISleeperClient _sleeperClient;
         private readonly IServiceProvider _serviceProvider;
         private readonly IConnectionMultiplexer _redis;
+        private readonly ActivitySource _activitySource;
         private readonly TimeSpan _sleeperUpdatePeriod = TimeSpan.FromDays(1);
 
-        public SleeperRefreshWorker(ILogger<SleeperRefreshWorker> logger, ISleeperClient sleeperClient, IServiceProvider serviceProvider, IConnectionMultiplexer redis)
+        public SleeperRefreshWorker(ILogger<SleeperRefreshWorker> logger,
+            ISleeperClient sleeperClient,
+            IServiceProvider serviceProvider,
+            IConnectionMultiplexer redis,
+            ActivitySource activitySource)
         {
             _logger = logger;
             _sleeperClient = sleeperClient;
             _serviceProvider = serviceProvider;
             _redis = redis;
+            _activitySource = activitySource;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -40,7 +46,7 @@ namespace Keeper.Synchronizer
             await using var scope = _serviceProvider.CreateAsyncScope();
             await using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
 
-            await databaseContext.Database.MigrateAsync(stoppingToken);
+            await MigrateDatabaseAsync(scope, stoppingToken);
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -90,6 +96,13 @@ namespace Keeper.Synchronizer
                 _logger.LogInformation("Will sleep for {}", delay);
                 await Task.Delay(delay, stoppingToken);
             }
+        }
+        
+        private async Task MigrateDatabaseAsync(IServiceScope scope, CancellationToken cancellationToken)
+        {
+            using var migrationActivity = _activitySource.StartActivity();
+            await using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            await databaseContext.Database.MigrateAsync(cancellationToken);
         }
     }
 }
