@@ -4,13 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
 using Keeper.Core.Database.Models;
+using Keeper.Synchronizer.Redis;
 using Keeper.Synchronizer.Sleeper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using StackExchange.Redis;
 
 namespace Keeper.Synchronizer
 {
@@ -23,20 +22,20 @@ namespace Keeper.Synchronizer
         private readonly ILogger<SleeperRefreshWorker> _logger;
         private readonly ISleeperClient _sleeperClient;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IConnectionMultiplexer _redis;
+        private readonly IRedisClient _redisClient;
         private readonly ActivitySource _activitySource;
         private readonly TimeSpan _sleeperUpdatePeriod = TimeSpan.FromDays(1);
 
         public SleeperRefreshWorker(ILogger<SleeperRefreshWorker> logger,
             ISleeperClient sleeperClient,
             IServiceProvider serviceProvider,
-            IConnectionMultiplexer redis,
+            IRedisClient redisClient,
             ActivitySource activitySource)
         {
             _logger = logger;
             _sleeperClient = sleeperClient;
             _serviceProvider = serviceProvider;
-            _redis = redis;
+            _redisClient = redisClient;
             _activitySource = activitySource;
         }
 
@@ -58,11 +57,7 @@ namespace Keeper.Synchronizer
             using var activity = _activitySource.StartActivity();
             await using var scope = _serviceProvider.CreateAsyncScope();
 
-            var redisDatabase = _redis.GetDatabase();
-            string rawSleeperLastUpdated = await redisDatabase.StringGetAsync(SleeperLastUpdatedKey);
-            var sleeperLastUpdated = string.IsNullOrEmpty(rawSleeperLastUpdated)
-                ? DateTime.MinValue
-                : DateTime.Parse(rawSleeperLastUpdated);
+            var sleeperLastUpdated = await _redisClient.GetDateAsync(SleeperLastUpdatedKey) ?? DateTime.MinValue;
             var nextUpdate = sleeperLastUpdated.Add(_sleeperUpdatePeriod);
 
             _logger.LogInformation("Sleeper last updated at [{}]. Sleeper next update at [{}]", sleeperLastUpdated, nextUpdate);
@@ -100,7 +95,7 @@ namespace Keeper.Synchronizer
                 var lastUpdated = DateTime.Now;
                 nextUpdate = lastUpdated.Add(_sleeperUpdatePeriod);
 
-                await redisDatabase.StringSetAsync(SleeperLastUpdatedKey, lastUpdated.ToString("O"));
+                await _redisClient.SetAsync(SleeperLastUpdatedKey, lastUpdated);
                 _logger.LogInformation("Added/updated all players in database. Next update will be at [{}]", nextUpdate);
             }
 

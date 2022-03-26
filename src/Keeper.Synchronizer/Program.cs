@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Keeper.Core.Database;
+using Keeper.Synchronizer.Redis;
 using Keeper.Synchronizer.Sleeper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,8 +43,10 @@ namespace Keeper.Synchronizer
 
                     services.AddDbContext<DatabaseContext>(options =>
                         options.UseSqlServer(config.GetConnectionString("DatabaseContext")));
-                    services.AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(
-                        _ => ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")));
+                    services
+                        .AddSingleton<IConnectionMultiplexer, ConnectionMultiplexer>(
+                            _ => ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")))
+                        .AddSingleton<IRedisClient, RedisClient>();
 
                     services.AddHostedService<SleeperRefreshWorker>();
                 });
