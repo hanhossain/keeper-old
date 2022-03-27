@@ -1,4 +1,6 @@
-﻿namespace Keeper.Core.Database.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Keeper.Core.Database.Models
 {
     public class SleeperPlayer
     {
@@ -17,6 +19,15 @@
         public string Team { get; set; }
 
         public string Status { get; set; }
+
+        [ForeignKey(nameof(NflPlayer))]
+        public int? NflId { get; set; }
+
+        #region Navigation Properties
+
+        public NflPlayer NflPlayer { get; set; }
+
+        #endregion
     }
 }
 

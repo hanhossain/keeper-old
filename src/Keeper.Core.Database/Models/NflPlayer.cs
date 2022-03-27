@@ -23,7 +23,9 @@ namespace Keeper.Core.Database.Models
         public ICollection<NflDefensiveStatistics> NflDefensiveStatistics { get; set; }
 
         public ICollection<NflOffensiveStatistics> NflOffensiveStatistics { get; set; }
-        
+
+        public SleeperPlayer SleeperPlayer { get; set; }
+
         #endregion
     }
 }
