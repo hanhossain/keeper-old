@@ -43,14 +43,14 @@ namespace Keeper.Synchronizer
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var nextUpdate = await UpdateSleeperPlayersIfNeededAsync(stoppingToken);
+                var nextUpdate = await UpdateSleeperPlayersAsync(stoppingToken);
                 var delay = nextUpdate - DateTime.Now;
                 _logger.LogInformation("Will sleep for {}", delay);
                 await Task.Delay(delay, stoppingToken);
             }
         }
 
-        private async Task<DateTime> UpdateSleeperPlayersIfNeededAsync(CancellationToken cancellationToken)
+        private async Task<DateTime> UpdateSleeperPlayersAsync(CancellationToken cancellationToken)
         {
             using var activity = _activitySource.StartActivity();
             await using var scope = _serviceProvider.CreateAsyncScope();
@@ -94,7 +94,7 @@ namespace Keeper.Synchronizer
                 nextUpdate = lastUpdated.Add(_sleeperUpdatePeriod);
 
                 await _redisClient.SetAsync(SleeperLastUpdatedKey, lastUpdated);
-                _logger.LogInformation("Added/updated all players in database. Next update will be at [{}]", nextUpdate);
+                _logger.LogInformation("Added/updated all sleeper players in database. Next update will be at [{}]", nextUpdate);
             }
 
             return nextUpdate;

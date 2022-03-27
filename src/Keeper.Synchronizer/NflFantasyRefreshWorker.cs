@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -23,166 +22,187 @@ public class NflFantasyRefreshWorker : BackgroundService
     private readonly IFantasyClient _fantasyClient;
     private readonly ActivitySource _activitySource;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IRedisClient _redisClient;
+    private readonly TimeSpan _updatePeriod = TimeSpan.FromDays(1);
 
     public NflFantasyRefreshWorker(
         ILogger<NflFantasyRefreshWorker> logger,
         IFantasyClient fantasyClient,
         ActivitySource activitySource,
-        IServiceProvider serviceProvider)
+        IServiceProvider serviceProvider,
+        IRedisClient redisClient)
     {
         _logger = logger;
         _fantasyClient = fantasyClient;
         _activitySource = activitySource;
         _serviceProvider = serviceProvider;
+        _redisClient = redisClient;
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await UpdateNflFantasyAsync(stoppingToken);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var nextUpdate = await UpdateNflFantasyAsync(stoppingToken);
+            var delay = nextUpdate - DateTime.Now;
+            _logger.LogInformation("Sleeping for {}", delay);
+            await Task.Delay(delay, stoppingToken);
+        }
     }
 
-    private async Task UpdateNflFantasyAsync(CancellationToken cancellationToken)
+    private async Task<DateTime> UpdateNflFantasyAsync(CancellationToken cancellationToken)
     {
         using var activity = _activitySource.StartActivity();
         await using var scope = _serviceProvider.CreateAsyncScope();
 
-        await using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-        var tasks = Enumerable.Range(1, 17).Select(x => _fantasyClient.GetAsync(2021, x));
-        var results = await Task.WhenAll(tasks);
+        var lastUpdated = await _redisClient.GetDateAsync(NflFantasyLastUpdatedKey) ?? DateTime.MinValue;
+        var nextUpdate = lastUpdated.Add(_updatePeriod);
 
-        var existingPlayers = await databaseContext
-            .NflPlayers
-            .ToDictionaryAsync(x => x.Id, cancellationToken);
-        var existingPlayerStatistics = await databaseContext
-            .NflPlayerStatistics
-            .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
-        var existingKickingStatistics = await databaseContext
-            .NflKickingStatistics
-            .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
-        var existingDefensiveStatistics = await databaseContext
-            .NflDefensiveStatistics
-            .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
-        var existingOffensiveStatistics = await databaseContext
-            .NflOffensiveStatistics
-            .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
-
-        foreach (var player in results.SelectMany(x => x))
+        if (nextUpdate <= DateTime.Now)
         {
-            if (!existingPlayers.TryGetValue(player.Id, out var dbPlayer))
+            await using var databaseContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            var tasks = Enumerable.Range(1, 17).Select(x => _fantasyClient.GetAsync(2021, x));
+            var results = await Task.WhenAll(tasks);
+
+            var existingPlayers = await databaseContext
+                .NflPlayers
+                .ToDictionaryAsync(x => x.Id, cancellationToken);
+            var existingPlayerStatistics = await databaseContext
+                .NflPlayerStatistics
+                .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
+            var existingKickingStatistics = await databaseContext
+                .NflKickingStatistics
+                .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
+            var existingDefensiveStatistics = await databaseContext
+                .NflDefensiveStatistics
+                .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
+            var existingOffensiveStatistics = await databaseContext
+                .NflOffensiveStatistics
+                .ToDictionaryAsync(x => (x.PlayerId, x.Season, x.Week), cancellationToken);
+
+            foreach (var player in results.SelectMany(x => x))
             {
-                dbPlayer = new NflPlayer()
+                if (!existingPlayers.TryGetValue(player.Id, out var dbPlayer))
                 {
-                    Id = player.Id
-                };
-                
-                existingPlayers[player.Id] = dbPlayer;
-                databaseContext.NflPlayers.Add(dbPlayer);
-            }
+                    dbPlayer = new NflPlayer()
+                    {
+                        Id = player.Id
+                    };
 
-            dbPlayer.Name = player.Name;
-            dbPlayer.Position = player.Position;
-            dbPlayer.Team = player.Team?.Name;
+                    existingPlayers[player.Id] = dbPlayer;
+                    databaseContext.NflPlayers.Add(dbPlayer);
+                }
 
-            var compoundKey = (player.Id, player.Season, player.Week);
+                dbPlayer.Name = player.Name;
+                dbPlayer.Position = player.Position;
+                dbPlayer.Team = player.Team?.Name;
 
-            if (!existingPlayerStatistics.TryGetValue(compoundKey, out var dbPlayerStatistics))
-            {
-                dbPlayerStatistics = new NflPlayerStatistics()
+                var compoundKey = (player.Id, player.Season, player.Week);
+
+                if (!existingPlayerStatistics.TryGetValue(compoundKey, out var dbPlayerStatistics))
                 {
-                    PlayerId = player.Id,
-                    Season = player.Season,
-                    Week = player.Week
-                };
-
-                existingPlayerStatistics[compoundKey] = dbPlayerStatistics;
-                databaseContext.NflPlayerStatistics.Add(dbPlayerStatistics);
-            }
-
-            dbPlayerStatistics.FantasyPoints = player.Statistics.FantasyPoints;
-
-            var kickingStats = player.Statistics.Kicking;
-            if (kickingStats != null)
-            {
-                if (!existingKickingStatistics.TryGetValue(compoundKey, out var dbKickingStatistics))
-                {
-                    dbKickingStatistics = new NflKickingStatistics()
+                    dbPlayerStatistics = new NflPlayerStatistics()
                     {
                         PlayerId = player.Id,
                         Season = player.Season,
                         Week = player.Week
                     };
 
-                    existingKickingStatistics[compoundKey] = dbKickingStatistics;
-                    databaseContext.NflKickingStatistics.Add(dbKickingStatistics);
+                    existingPlayerStatistics[compoundKey] = dbPlayerStatistics;
+                    databaseContext.NflPlayerStatistics.Add(dbPlayerStatistics);
                 }
 
-                dbKickingStatistics.PatMade = kickingStats.Pat.Made;
-                dbKickingStatistics.FieldGoal0To19Yards = kickingStats.FieldGoal.Yards0To19;
-                dbKickingStatistics.FieldGoal20To29Yards = kickingStats.FieldGoal.Yards20To29;
-                dbKickingStatistics.FieldGoal30To39Yards = kickingStats.FieldGoal.Yards30To39;
-                dbKickingStatistics.FieldGoal40To49Yards = kickingStats.FieldGoal.Yards40To49;
-                dbKickingStatistics.FieldGoal50PlusYards = kickingStats.FieldGoal.Yards50Plus;
-            }
+                dbPlayerStatistics.FantasyPoints = player.Statistics.FantasyPoints;
 
-            var defensiveStats = player.Statistics.Defensive;
-            if (defensiveStats != null)
-            {
-                if (!existingDefensiveStatistics.TryGetValue(compoundKey, out var dbDefensiveStatistics))
+                var kickingStats = player.Statistics.Kicking;
+                if (kickingStats != null)
                 {
-                    dbDefensiveStatistics = new NflDefensiveStatistics()
+                    if (!existingKickingStatistics.TryGetValue(compoundKey, out var dbKickingStatistics))
                     {
-                        PlayerId = player.Id,
-                        Season = player.Season,
-                        Week = player.Week
-                    };
+                        dbKickingStatistics = new NflKickingStatistics()
+                        {
+                            PlayerId = player.Id,
+                            Season = player.Season,
+                            Week = player.Week
+                        };
 
-                    existingDefensiveStatistics[compoundKey] = dbDefensiveStatistics;
-                    databaseContext.NflDefensiveStatistics.Add(dbDefensiveStatistics);
+                        existingKickingStatistics[compoundKey] = dbKickingStatistics;
+                        databaseContext.NflKickingStatistics.Add(dbKickingStatistics);
+                    }
+
+                    dbKickingStatistics.PatMade = kickingStats.Pat.Made;
+                    dbKickingStatistics.FieldGoal0To19Yards = kickingStats.FieldGoal.Yards0To19;
+                    dbKickingStatistics.FieldGoal20To29Yards = kickingStats.FieldGoal.Yards20To29;
+                    dbKickingStatistics.FieldGoal30To39Yards = kickingStats.FieldGoal.Yards30To39;
+                    dbKickingStatistics.FieldGoal40To49Yards = kickingStats.FieldGoal.Yards40To49;
+                    dbKickingStatistics.FieldGoal50PlusYards = kickingStats.FieldGoal.Yards50Plus;
                 }
 
-                dbDefensiveStatistics.Sacks = defensiveStats.Tackling.Sacks;
-                dbDefensiveStatistics.Interceptions = defensiveStats.Turnover.Interceptions;
-                dbDefensiveStatistics.FumblesRecovered = defensiveStats.Turnover.FumblesRecovered;
-                dbDefensiveStatistics.Safeties = defensiveStats.Score.Safeties;
-                dbDefensiveStatistics.Touchdowns = defensiveStats.Score.Touchdowns;
-                dbDefensiveStatistics.Def2PtRet = defensiveStats.Score.Def2PtRet;
-                dbDefensiveStatistics.RetTouchdowns = defensiveStats.Returning.Touchdowns;
-                dbDefensiveStatistics.PointsAllowed = defensiveStats.Points.PointsAllowed;
-            }
-
-            var offensiveStats = player.Statistics.Offensive;
-            if (offensiveStats != null)
-            {
-                if (!existingOffensiveStatistics.TryGetValue(compoundKey, out var dNflOffensiveStatistics))
+                var defensiveStats = player.Statistics.Defensive;
+                if (defensiveStats != null)
                 {
-                    dNflOffensiveStatistics = new NflOffensiveStatistics()
+                    if (!existingDefensiveStatistics.TryGetValue(compoundKey, out var dbDefensiveStatistics))
                     {
-                        PlayerId = player.Id,
-                        Season = player.Season,
-                        Week = player.Week
-                    };
+                        dbDefensiveStatistics = new NflDefensiveStatistics()
+                        {
+                            PlayerId = player.Id,
+                            Season = player.Season,
+                            Week = player.Week
+                        };
 
-                    existingOffensiveStatistics[compoundKey] = dNflOffensiveStatistics;
-                    databaseContext.NflOffensiveStatistics.Add(dNflOffensiveStatistics);
+                        existingDefensiveStatistics[compoundKey] = dbDefensiveStatistics;
+                        databaseContext.NflDefensiveStatistics.Add(dbDefensiveStatistics);
+                    }
+
+                    dbDefensiveStatistics.Sacks = defensiveStats.Tackling.Sacks;
+                    dbDefensiveStatistics.Interceptions = defensiveStats.Turnover.Interceptions;
+                    dbDefensiveStatistics.FumblesRecovered = defensiveStats.Turnover.FumblesRecovered;
+                    dbDefensiveStatistics.Safeties = defensiveStats.Score.Safeties;
+                    dbDefensiveStatistics.Touchdowns = defensiveStats.Score.Touchdowns;
+                    dbDefensiveStatistics.Def2PtRet = defensiveStats.Score.Def2PtRet;
+                    dbDefensiveStatistics.RetTouchdowns = defensiveStats.Returning.Touchdowns;
+                    dbDefensiveStatistics.PointsAllowed = defensiveStats.Points.PointsAllowed;
                 }
 
-                dNflOffensiveStatistics.PassingYards = offensiveStats.Passing.Yards;
-                dNflOffensiveStatistics.PassingTouchdowns = offensiveStats.Passing.Touchdowns;
-                dNflOffensiveStatistics.PassingInterceptions = offensiveStats.Passing.Interceptions;
-                dNflOffensiveStatistics.RushingYards = offensiveStats.Rushing.Yards;
-                dNflOffensiveStatistics.RushingTouchdowns = offensiveStats.Rushing.Touchdowns;
-                dNflOffensiveStatistics.ReceivingReceptions = offensiveStats.Receiving.Receptions;
-                dNflOffensiveStatistics.ReceivingYards = offensiveStats.Receiving.Yards;
-                dNflOffensiveStatistics.ReceivingTouchdowns = offensiveStats.Receiving.Touchdowns;
-                dNflOffensiveStatistics.ReturningTouchdowns = offensiveStats.Returning.Touchdowns;
-                dNflOffensiveStatistics.TwoPointConversions = offensiveStats.Miscellaneous.TwoPointConversions;
-                dNflOffensiveStatistics.FumbleTouchdowns = offensiveStats.Fumble.Touchdowns;
-                dNflOffensiveStatistics.FumblesLost = offensiveStats.Fumble.Lost;
+                var offensiveStats = player.Statistics.Offensive;
+                if (offensiveStats != null)
+                {
+                    if (!existingOffensiveStatistics.TryGetValue(compoundKey, out var dbNflOffensiveStatistics))
+                    {
+                        dbNflOffensiveStatistics = new NflOffensiveStatistics()
+                        {
+                            PlayerId = player.Id,
+                            Season = player.Season,
+                            Week = player.Week
+                        };
+
+                        existingOffensiveStatistics[compoundKey] = dbNflOffensiveStatistics;
+                        databaseContext.NflOffensiveStatistics.Add(dbNflOffensiveStatistics);
+                    }
+
+                    dbNflOffensiveStatistics.PassingYards = offensiveStats.Passing.Yards;
+                    dbNflOffensiveStatistics.PassingTouchdowns = offensiveStats.Passing.Touchdowns;
+                    dbNflOffensiveStatistics.PassingInterceptions = offensiveStats.Passing.Interceptions;
+                    dbNflOffensiveStatistics.RushingYards = offensiveStats.Rushing.Yards;
+                    dbNflOffensiveStatistics.RushingTouchdowns = offensiveStats.Rushing.Touchdowns;
+                    dbNflOffensiveStatistics.ReceivingReceptions = offensiveStats.Receiving.Receptions;
+                    dbNflOffensiveStatistics.ReceivingYards = offensiveStats.Receiving.Yards;
+                    dbNflOffensiveStatistics.ReceivingTouchdowns = offensiveStats.Receiving.Touchdowns;
+                    dbNflOffensiveStatistics.ReturningTouchdowns = offensiveStats.Returning.Touchdowns;
+                    dbNflOffensiveStatistics.TwoPointConversions = offensiveStats.Miscellaneous.TwoPointConversions;
+                    dbNflOffensiveStatistics.FumbleTouchdowns = offensiveStats.Fumble.Touchdowns;
+                    dbNflOffensiveStatistics.FumblesLost = offensiveStats.Fumble.Lost;
+                }
             }
+
+            await databaseContext.SaveChangesAsync(cancellationToken);
+            lastUpdated = DateTime.Now;
+            nextUpdate = lastUpdated.Add(_updatePeriod);
+
+            await _redisClient.SetAsync(NflFantasyLastUpdatedKey, lastUpdated);
+            _logger.LogInformation("Updated NFL Fantasy data in database. Next update will be at [{}]", nextUpdate);
         }
-        
-        _logger.LogInformation("Saving changes");
-        await databaseContext.SaveChangesAsync(cancellationToken);
-        _logger.LogInformation("Saved changes");
+
+        return nextUpdate;
     }
 }
