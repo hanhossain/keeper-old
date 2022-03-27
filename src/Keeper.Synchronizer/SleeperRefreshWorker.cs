@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Keeper.Core.Database;
@@ -68,25 +70,36 @@ namespace Keeper.Synchronizer
                     .SleeperPlayers
                     .ToDictionaryAsync(x => x.Id, cancellationToken);
 
+                var validPositions = new HashSet<string>() { "QB", "RB", "WR", "TE", "K", "DEF" };
+                var invalidNames = new HashSet<string>() { "Duplicate Player", "Player Invalid" };
+                
                 foreach (var player in players.Values)
                 {
-                    if (!existingPlayers.TryGetValue(player.PlayerId, out var dbPlayer))
+                    if (validPositions.Contains(player.Position) && !invalidNames.Contains(player.FirstName))
                     {
-                        dbPlayer = new SleeperPlayer()
+                        if (!existingPlayers.TryGetValue(player.PlayerId, out var dbPlayer))
                         {
-                            Id = player.PlayerId
-                        };
+                            dbPlayer = new SleeperPlayer()
+                            {
+                                Id = player.PlayerId
+                            };
 
-                        databaseContext.SleeperPlayers.Add(dbPlayer);
+                            databaseContext.SleeperPlayers.Add(dbPlayer);
+                        }
+
+                        dbPlayer.Active = player.Active;
+                        dbPlayer.Position = player.Position;
+                        dbPlayer.Status = player.Status;
+                        dbPlayer.Team = player.Team;
+                        dbPlayer.FirstName = player.FirstName;
+                        dbPlayer.LastName = player.LastName;
+                        dbPlayer.FullName = $"{player.FirstName} {player.LastName}";                        
                     }
-
-                    dbPlayer.Active = player.Active;
-                    dbPlayer.Position = player.Position;
-                    dbPlayer.Status = player.Status;
-                    dbPlayer.Team = player.Team;
-                    dbPlayer.FirstName = player.FirstName;
-                    dbPlayer.LastName = player.LastName;
-                    dbPlayer.FullName = $"{player.FirstName} {player.LastName}";
+                    else if (existingPlayers.TryGetValue(player.PlayerId, out var playerToRemove))
+                    {
+                        databaseContext.Remove(playerToRemove);
+                        existingPlayers.Remove(player.PlayerId);
+                    }
                 }
 
                 await databaseContext.SaveChangesAsync(cancellationToken);
