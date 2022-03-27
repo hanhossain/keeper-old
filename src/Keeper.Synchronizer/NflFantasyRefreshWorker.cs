@@ -96,6 +96,12 @@ public class NflFantasyRefreshWorker : BackgroundService
                 dbPlayer.Name = player.Name;
                 dbPlayer.Position = player.Position;
                 dbPlayer.Team = player.Team?.Name;
+                
+                // override Team=LA to LAR
+                if (dbPlayer.Team == "LA")
+                {
+                    dbPlayer.Team = "LAR";
+                }
 
                 var compoundKey = (player.Id, player.Season, player.Week);
 
