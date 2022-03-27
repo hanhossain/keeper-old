@@ -49,7 +49,7 @@ namespace Keeper.Synchronizer
                             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
                             .AddHttpClientInstrumentation()
                             .AddAspNetCoreInstrumentation()
-                            .AddSqlClientInstrumentation()
+                            .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
                             .AddRedisInstrumentation());
 
                     services.AddSingleton<ActivitySource, ActivitySource>(_ => new ActivitySource(serviceName));
@@ -67,6 +67,8 @@ namespace Keeper.Synchronizer
                     services
                         .AddHostedService<SleeperRefreshWorker>()
                         .AddHostedService<NflFantasyRefreshWorker>();
+                    // TODO: enable periodic refresh and do not let it run if the sleeper and nfl fantasy refresh workers have not finished.
+                    // .AddHostedService<PlayerLinkWorker>();
                 });
     }
 }
