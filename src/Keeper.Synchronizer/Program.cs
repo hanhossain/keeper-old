@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Keeper.Core.Database;
 using Keeper.Synchronizer.Redis;
+using Keeper.Synchronizer.Nfl;
 using Keeper.Synchronizer.Sleeper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +18,7 @@ namespace Keeper.Synchronizer
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-
+            
             MigrateDatabase(host);
             
             host.Run();
@@ -54,6 +55,7 @@ namespace Keeper.Synchronizer
                     services.AddSingleton<ActivitySource, ActivitySource>(_ => new ActivitySource(serviceName));
 
                     services.AddHttpClient<ISleeperClient, SleeperClient>();
+                    services.AddHttpClient<IFantasyClient, FantasyClient>();
 
                     services.AddDbContext<DatabaseContext>(options =>
                         options.UseSqlServer(config.GetConnectionString("DatabaseContext")));
@@ -62,7 +64,9 @@ namespace Keeper.Synchronizer
                             _ => ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")))
                         .AddSingleton<IRedisClient, RedisClient>();
 
-                    services.AddHostedService<SleeperRefreshWorker>();
+                    services
+                        .AddHostedService<SleeperRefreshWorker>()
+                        .AddHostedService<NflFantasyRefreshWorker>();
                 });
     }
 }

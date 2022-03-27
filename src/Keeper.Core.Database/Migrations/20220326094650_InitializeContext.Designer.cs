@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Keeper.Core.Database.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20220324080908_InitializeContext")]
+    [Migration("20220326094650_InitializeContext")]
     partial class InitializeContext
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,10 +153,7 @@ namespace Keeper.Core.Database.Migrations
             modelBuilder.Entity("Keeper.Core.Database.Models.NflPlayer", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -225,7 +222,7 @@ namespace Keeper.Core.Database.Migrations
             modelBuilder.Entity("Keeper.Core.Database.Models.NflDefensiveStatistics", b =>
                 {
                     b.HasOne("Keeper.Core.Database.Models.NflPlayer", "Player")
-                        .WithMany()
+                        .WithMany("NflDefensiveStatistics")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -247,7 +244,7 @@ namespace Keeper.Core.Database.Migrations
             modelBuilder.Entity("Keeper.Core.Database.Models.NflOffensiveStatistics", b =>
                 {
                     b.HasOne("Keeper.Core.Database.Models.NflPlayer", "Player")
-                        .WithMany()
+                        .WithMany("NflOffensiveStatistics")
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -268,7 +265,11 @@ namespace Keeper.Core.Database.Migrations
 
             modelBuilder.Entity("Keeper.Core.Database.Models.NflPlayer", b =>
                 {
+                    b.Navigation("NflDefensiveStatistics");
+
                     b.Navigation("NflKickingStatistics");
+
+                    b.Navigation("NflOffensiveStatistics");
 
                     b.Navigation("PlayerStatistics");
                 });

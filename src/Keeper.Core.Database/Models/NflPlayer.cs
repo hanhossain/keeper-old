@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keeper.Core.Database.Models
 {
     public class NflPlayer
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -14,9 +16,13 @@ namespace Keeper.Core.Database.Models
 
         #region Navigation Properties
 
-        public List<NflPlayerStatistics> PlayerStatistics { get; set; }
+        public ICollection<NflPlayerStatistics> PlayerStatistics { get; set; }
 
-        public List<NflKickingStatistics> NflKickingStatistics { get; set; }
+        public ICollection<NflKickingStatistics> NflKickingStatistics { get; set; }
+
+        public ICollection<NflDefensiveStatistics> NflDefensiveStatistics { get; set; }
+
+        public ICollection<NflOffensiveStatistics> NflOffensiveStatistics { get; set; }
         
         #endregion
     }

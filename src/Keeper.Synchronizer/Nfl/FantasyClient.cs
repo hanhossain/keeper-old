@@ -7,6 +7,7 @@ using Keeper.Synchronizer.Nfl.Models;
 
 namespace Keeper.Synchronizer.Nfl
 {
+    // TODO: propagate cancellation tokens
     public class FantasyClient : IFantasyClient
     {
         private const int PageSize = 25;
@@ -17,11 +18,9 @@ namespace Keeper.Synchronizer.Nfl
             _httpClient = httpClient;
         }
 
-        public async Task<NflPageResult> GetAsync(int season, int week, int offset, NflPosition? position = null)
+        public async Task<NflPageResult> GetAsync(int season, int week, int offset, NflPosition position)
         {
-            string positionQuery = position != null ? $"&position={(int)position}" : string.Empty;
-            
-            string uri = $"https://fantasy.nfl.com/research/players?offset={offset}{positionQuery}" +
+            string uri = $"https://fantasy.nfl.com/research/players?offset={offset}&position={(int)position}" +
                          $"&sort=pts&statCategory=stats&statSeason={season}&statType=weekStats&statWeek={week}";
 
             await using var stream = await _httpClient.GetStreamAsync(uri);
@@ -58,7 +57,7 @@ namespace Keeper.Synchronizer.Nfl
             };
         }
 
-        public async Task<List<NflPageResult>> GetAsync(int season, int week, NflPosition? position = null)
+        public async Task<List<NflPageResult>> GetAsync(int season, int week, NflPosition position)
         {
             var week1Results = await GetAsync(season, week, 1, position);
 
@@ -78,34 +77,24 @@ namespace Keeper.Synchronizer.Nfl
             return players;
         }
 
-        public async Task<List<NflResult>> GetAsync(int season, NflPosition? position = null)
+        public async Task<List<NflPlayer>> GetAsync(int season, int week)
         {
-            var week1Results = await GetAsync(season, 1, position);
-            var weeks = week1Results.Select(x => x.Weeks).FirstOrDefault();
-
-            var tasks = new List<Task<List<NflPageResult>>>();
-            for (int i = 2; i <= weeks; i++)
+            var positions = new[]
             {
-                tasks.Add(GetAsync(season, i, position));
-            }
+                NflPosition.Quarterback,
+                NflPosition.RunningBack,
+                NflPosition.WideReceiver,
+                NflPosition.TightEnd,
+                NflPosition.Kicker,
+                NflPosition.Defense
+            };
 
-            var seasonResults = (await Task.WhenAll(tasks)).ToList();
-            seasonResults.Insert(0, week1Results);
-
-            var results = seasonResults
-                .SelectMany(weekResults => weekResults)
-                .GroupBy(
-                    pageResult => pageResult.Week,
-                    pageResult => pageResult.Values,
-                    (week, players) => new NflResult()
-                    {
-                        Season = season,
-                        Week = week,
-                        Values = players.SelectMany(x => x).ToList()
-                    })
+            var tasks = positions.Select(x => GetAsync(season, week, x));
+            var weekResults = await Task.WhenAll(tasks);
+            return weekResults
+                .SelectMany(x => x)
+                .SelectMany(x => x.Values)
                 .ToList();
-
-            return results;
         }
     }
 }
