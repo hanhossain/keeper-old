@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace Keeper.Api
 {
@@ -24,6 +27,17 @@ namespace Keeper.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var serviceName = "keeper-api";
+            
+            // Configure OpenTelemetry
+            services.AddOpenTelemetryTracing(builder =>
+                builder
+                    .AddJaegerExporter(options => options.AgentHost = Configuration.GetConnectionString("Jaeger"))
+                    .AddSource(serviceName)
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
+                    .AddAspNetCoreInstrumentation());
+
+            services.AddSingleton<ActivitySource, ActivitySource>(_ => new ActivitySource(serviceName));
 
             services.AddControllers();
         }
