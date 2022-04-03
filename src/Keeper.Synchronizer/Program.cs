@@ -66,9 +66,8 @@ namespace Keeper.Synchronizer
 
                     services
                         .AddHostedService<SleeperRefreshWorker>()
-                        .AddHostedService<NflFantasyRefreshWorker>();
-                    // TODO: enable periodic refresh and do not let it run if the sleeper and nfl fantasy refresh workers have not finished.
-                    // .AddHostedService<PlayerLinkWorker>();
+                        .AddHostedService<NflFantasyRefreshWorker>()
+                        .AddHostedService<PlayerLinkWorker>();
                 });
     }
 }

@@ -16,7 +16,7 @@ namespace Keeper.Synchronizer;
 
 public class NflFantasyRefreshWorker : BackgroundService
 {
-    private const string NflFantasyLastUpdatedKey = "NflFantasyLastUpdated";
+    public const string NflFantasyLastUpdatedKey = "NflFantasyLastUpdated";
     
     private readonly ILogger<NflFantasyRefreshWorker> _logger;
     private readonly IFantasyClient _fantasyClient;

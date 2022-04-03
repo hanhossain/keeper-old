@@ -19,7 +19,7 @@ namespace Keeper.Synchronizer
     // TODO: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-6.0&tabs=visual-studio#timed-background-tasks
     public class SleeperRefreshWorker : BackgroundService
     {
-        private const string SleeperLastUpdatedKey = "SleeperLastUpdated";
+        public const string SleeperLastUpdatedKey = "SleeperLastUpdated";
 
         private readonly ILogger<SleeperRefreshWorker> _logger;
         private readonly ISleeperClient _sleeperClient;
