@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ public class PlayersController : ControllerBase
 {
     private readonly DatabaseContext _databaseContext;
 
-    public PlayersController(DatabaseContext databaseContext, ActivitySource activitySource)
+    public PlayersController(DatabaseContext databaseContext)
     {
         _databaseContext = databaseContext;
     }
