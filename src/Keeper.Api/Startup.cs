@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Keeper.Core.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -35,9 +30,11 @@ namespace Keeper.Api
                     .AddJaegerExporter(options => options.AgentHost = Configuration.GetConnectionString("Jaeger"))
                     .AddSource(serviceName)
                     .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
-                    .AddAspNetCoreInstrumentation());
+                    .AddAspNetCoreInstrumentation()
+                    .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true));
 
-            services.AddSingleton<ActivitySource, ActivitySource>(_ => new ActivitySource(serviceName));
+            services.AddDbContext<DatabaseContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DatabaseContext")));
 
             services.AddControllers();
         }
