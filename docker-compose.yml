@@ -29,6 +29,17 @@ services:
       - '14268:14268'
       - '14250:14250'
       - '9411:9411'
+    volumes:
+      - jaeger-volume:/tmp
+  keeper-synchronizer:
+    build:
+      context: .
+      dockerfile: src/Keeper.Synchronizer/Dockerfile
+    environment:
+    - ConnectionStrings__DatabaseContext=Server=sql-server;Database=Keeper;User Id=sa;Password=${SQL_SERVER_PASS};
+    - ConnectionStrings__Redis=redis
+    - ConnectionStrings__Jaeger=jaeger
 volumes:
   sql-volume:
   redis-volume:
+  jaeger-volume:
