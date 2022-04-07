@@ -2,34 +2,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Keeper.Api.Models;
-using Keeper.Core.Database;
+using Keeper.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Keeper.Api.Controllers;
 
 [ApiController]
 public class PlayersController : ControllerBase
 {
-    private readonly DatabaseContext _databaseContext;
+    private readonly IKeeperRepository _keeperRepository;
 
-    public PlayersController(DatabaseContext databaseContext)
+    public PlayersController(IKeeperRepository keeperRepository)
     {
-        _databaseContext = databaseContext;
+        _keeperRepository = keeperRepository;
     }
 
     [HttpGet]
     [Route("api/players")]
     public async Task<IActionResult> GetPlayers(CancellationToken cancellationToken, string query = null)
     {
-        var playerQuery = _databaseContext.SleeperPlayers.Where(x => x.Active);
-        
-        if (!string.IsNullOrEmpty(query))
-        {
-            playerQuery = playerQuery.Where(x => x.FullName.Contains(query));
-        }
-        
-        var dbPlayers = await playerQuery.ToListAsync(cancellationToken);
+        var dbPlayers = await _keeperRepository.GetPlayersAsync(query, cancellationToken);
 
         var players = dbPlayers
             .Select(x => new Player()
@@ -49,9 +41,7 @@ public class PlayersController : ControllerBase
     [Route("api/players/{playerId}")]
     public async Task<IActionResult> GetPlayer(string playerId, CancellationToken cancellationToken)
     {
-        var dbPlayer = await _databaseContext
-            .SleeperPlayers
-            .FindAsync(new object [] { playerId }, cancellationToken);
+        var dbPlayer = await _keeperRepository.GetPlayerAsync(playerId, cancellationToken);
 
         if (dbPlayer == null)
         {
@@ -75,12 +65,7 @@ public class PlayersController : ControllerBase
     [Route("api/players/{playerId}/seasons/{season}")]
     public async Task<IActionResult> GetSeasonStatistics(string playerId, int season, CancellationToken cancellationToken)
     {
-        var dbPlayer = await _databaseContext
-            .NflPlayers
-            .Include(x => x.PlayerStatistics.Where(ps => ps.Season == season))
-            .Include(x => x.NflOffensiveStatistics.Where(os => os.Season == season))
-            .Where(x => x.SleeperPlayer.Id == playerId)
-            .FirstOrDefaultAsync(cancellationToken);
+        var dbPlayer = await _keeperRepository.GetPlayerSeasonStatisticsAsync(playerId, season, cancellationToken);
         
         if (dbPlayer == null)
         {

@@ -1,4 +1,5 @@
-﻿using Keeper.Core.Database;
+﻿using Keeper.Api.Repositories;
+using Keeper.Core.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +34,10 @@ namespace Keeper.Api
                     .AddAspNetCoreInstrumentation()
                     .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true));
 
-            services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DatabaseContext")));
+            services
+                .AddDbContext<DatabaseContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DatabaseContext")))
+                .AddScoped<IKeeperRepository, KeeperRepository>();
 
             services.AddControllers();
         }
