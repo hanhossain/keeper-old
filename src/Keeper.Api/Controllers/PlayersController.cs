@@ -63,7 +63,7 @@ public class PlayersController : ControllerBase
 
     [HttpGet]
     [Route("api/players/{playerId}/seasons/{season}")]
-    public async Task<IActionResult> GetSeasonStatistics(string playerId, int season, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPlayerSeasonStatistics(string playerId, int season, CancellationToken cancellationToken)
     {
         var dbPlayer = await _keeperRepository.GetPlayerSeasonStatisticsAsync(playerId, season, cancellationToken);
         
@@ -73,14 +73,26 @@ public class PlayersController : ControllerBase
         }
         
         // TODO: this should have it's own model. It also needs to have all data (from offensive, defensive, and kicking), not just passing and rushing data.
-        var result = new
+        var playerStats = dbPlayer.PlayerStatistics;
+        var offensiveStats = dbPlayer.NflOffensiveStatistics;
+        var result = new PlayerSeasonStatistics()
         {
-            FantasyPoints = dbPlayer.PlayerStatistics.Sum(x => x.FantasyPoints),
-            PassingInterceptions = dbPlayer.NflOffensiveStatistics.Sum(x => x.PassingInterceptions),
-            PassingTouchdowns = dbPlayer.NflOffensiveStatistics.Sum(x => x.PassingTouchdowns),
-            PassingYards = dbPlayer.NflOffensiveStatistics.Sum(x => x.PassingYards),
-            RushingTouchdowns = dbPlayer.NflOffensiveStatistics.Sum(x => x.RushingTouchdowns),
-            RushingYards = dbPlayer.NflOffensiveStatistics.Sum(x => x.RushingYards)
+            FantasyPoints = CalculatedStatistics.Calculate(playerStats.Select(x => x.FantasyPoints)),
+            Offensive = new CalculatedOffensiveStatistics()
+            {
+                FumblesLost = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.FumblesLost)),
+                FumbleTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.FumbleTouchdowns)),
+                PassingInterceptions = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.PassingInterceptions)),
+                PassingTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.PassingTouchdowns)),
+                PassingYards = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.PassingYards)),
+                ReceivingReceptions = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReceivingReceptions)),
+                ReceivingTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReceivingTouchdowns)),
+                ReceivingYards = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReceivingYards)),
+                ReturningTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReturningTouchdowns)),
+                RushingTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.RushingTouchdowns)),
+                RushingYards = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.RushingYards)),
+                TwoPointConversions = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.TwoPointConversions))
+            }
         };
         return Ok(result);
     }
