@@ -74,25 +74,11 @@ public class PlayersController : ControllerBase
         
         // TODO: this should have it's own model. It also needs to have all data (from offensive, defensive, and kicking), not just passing and rushing data.
         var playerStats = dbPlayer.PlayerStatistics;
-        var offensiveStats = dbPlayer.NflOffensiveStatistics;
         var result = new PlayerSeasonStatistics()
         {
             FantasyPoints = CalculatedStatistics.Calculate(playerStats.Select(x => x.FantasyPoints)),
-            Offensive = new CalculatedOffensiveStatistics()
-            {
-                FumblesLost = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.FumblesLost)),
-                FumbleTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.FumbleTouchdowns)),
-                PassingInterceptions = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.PassingInterceptions)),
-                PassingTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.PassingTouchdowns)),
-                PassingYards = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.PassingYards)),
-                ReceivingReceptions = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReceivingReceptions)),
-                ReceivingTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReceivingTouchdowns)),
-                ReceivingYards = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReceivingYards)),
-                ReturningTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.ReturningTouchdowns)),
-                RushingTouchdowns = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.RushingTouchdowns)),
-                RushingYards = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.RushingYards)),
-                TwoPointConversions = CalculatedStatistics.Calculate(offensiveStats.Select(x => x.TwoPointConversions))
-            }
+            Offensive = CalculatedOffensiveStatistics.Calculate(dbPlayer.NflOffensiveStatistics),
+            Defensive = CalculatedDefensiveStatistics.Calculate(dbPlayer.NflDefensiveStatistics)
         };
         return Ok(result);
     }
