@@ -7,4 +7,6 @@ public class PlayerSeasonStatistics
     public CalculatedOffensiveStatistics Offensive { get; set; }
 
     public CalculatedDefensiveStatistics Defensive { get; set; }
+
+    public CalculatedKickingStatistics Kicking { get; set; }
 }

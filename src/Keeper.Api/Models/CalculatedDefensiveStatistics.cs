@@ -6,7 +6,7 @@ namespace Keeper.Api.Models;
 
 public class CalculatedDefensiveStatistics
 {
-    public CalculatedDefensiveStatistics(ICollection<NflDefensiveStatistics> defensiveStats)
+    private CalculatedDefensiveStatistics(ICollection<NflDefensiveStatistics> defensiveStats)
     {
         Interceptions = CalculatedStatistics.Calculate(defensiveStats.Select(x => x.Interceptions));
         Sacks = CalculatedStatistics.Calculate(defensiveStats.Select(x => x.Sacks));
@@ -41,19 +41,19 @@ public class CalculatedDefensiveStatistics
         return properties.Any(x => x != null) ? calculatedStats : null;
     }
     
-    public CalculatedStatistics Sacks { get; set; }
+    public CalculatedStatistics Sacks { get; }
 
-    public CalculatedStatistics Interceptions { get; set; }
+    public CalculatedStatistics Interceptions { get; }
 
-    public CalculatedStatistics FumblesRecovered { get; set; }
+    public CalculatedStatistics FumblesRecovered { get; }
 
-    public CalculatedStatistics Safeties { get; set; }
+    public CalculatedStatistics Safeties { get; }
 
-    public CalculatedStatistics Touchdowns { get; set; }
+    public CalculatedStatistics Touchdowns { get; }
 
-    public CalculatedStatistics Def2PtRet { get; set; }
+    public CalculatedStatistics Def2PtRet { get; }
 
-    public CalculatedStatistics RetTouchdowns { get; set; }
+    public CalculatedStatistics RetTouchdowns { get; }
 
-    public CalculatedStatistics PointsAllowed { get; set; }
+    public CalculatedStatistics PointsAllowed { get; }
 }

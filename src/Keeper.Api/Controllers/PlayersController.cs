@@ -34,6 +34,7 @@ public class PlayersController : ControllerBase
                 Team = x.Team
             })
             .ToList();
+        
         return Ok(players);
     }
 
@@ -72,14 +73,14 @@ public class PlayersController : ControllerBase
             return NotFound();
         }
         
-        // TODO: this should have it's own model. It also needs to have all data (from offensive, defensive, and kicking), not just passing and rushing data.
-        var playerStats = dbPlayer.PlayerStatistics;
         var result = new PlayerSeasonStatistics()
         {
-            FantasyPoints = CalculatedStatistics.Calculate(playerStats.Select(x => x.FantasyPoints)),
+            FantasyPoints = CalculatedStatistics.Calculate(dbPlayer.PlayerStatistics.Select(x => x.FantasyPoints)),
             Offensive = CalculatedOffensiveStatistics.Calculate(dbPlayer.NflOffensiveStatistics),
-            Defensive = CalculatedDefensiveStatistics.Calculate(dbPlayer.NflDefensiveStatistics)
+            Defensive = CalculatedDefensiveStatistics.Calculate(dbPlayer.NflDefensiveStatistics),
+            Kicking = CalculatedKickingStatistics.Calculate(dbPlayer.NflKickingStatistics)
         };
+        
         return Ok(result);
     }
 }
