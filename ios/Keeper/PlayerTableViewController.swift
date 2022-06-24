@@ -89,18 +89,17 @@ class PlayerTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath) as! SubtitleRightDetailTableViewCell
 
         let section = sections[indexPath.section]
         let player = players[section]![indexPath.row]
         let statistics = seasonStatistics[player.playerId]
-        cell.textLabel?.text = "\(player.firstName) \(player.lastName)"
-        
-        if let points = statistics?.stats["pts_std"] {
-            cell.detailTextLabel?.text  = "\(player.position ?? "") - \(player.team ?? "") - \(points)"
-        } else {
-            cell.detailTextLabel?.text  = "\(player.position ?? "") - \(player.team ?? "")"
-        }
+
+        cell.mainText.text = "\(player.firstName) \(player.lastName)"
+        cell.subtitle.text = "\(player.position ?? "") - \(player.team ?? "")"
+
+        let points = statistics?.stats["pts_std"] ?? 0
+        cell.rightDetail.text = String(points)
 
         return cell
     }

@@ -15,6 +15,7 @@
 		59A1118E2864E9DA00A0EA34 /* PlayerTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */; };
 		59A111902864EA9700A0EA34 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1118F2864EA9700A0EA34 /* Player.swift */; };
 		59A111922865170200A0EA34 /* SeasonStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A111912865170200A0EA34 /* SeasonStatistics.swift */; };
+		59A111C22865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerTableViewController.swift; sourceTree = "<group>"; };
 		59A1118F2864EA9700A0EA34 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		59A111912865170200A0EA34 /* SeasonStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonStatistics.swift; sourceTree = "<group>"; };
+		59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleRightDetailTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */,
 				59A1118F2864EA9700A0EA34 /* Player.swift */,
 				59A111912865170200A0EA34 /* SeasonStatistics.swift */,
+				59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */,
 			);
 			path = Keeper;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 				59A1117A2864E95700A0EA34 /* AppDelegate.swift in Sources */,
 				59A1118E2864E9DA00A0EA34 /* PlayerTableViewController.swift in Sources */,
 				59A1117C2864E95700A0EA34 /* SceneDelegate.swift in Sources */,
+				59A111C22865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
