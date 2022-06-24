@@ -8,7 +8,8 @@
 import UIKit
 
 class PlayerTableViewController: UITableViewController {
-    private var players = [Player]()
+    private var sections = [Character]()
+    private var players = [Character: [Player]]()
     private var seasonStatistics = [String: SeasonStatistics]()
 
     override func viewDidLoad() {
@@ -16,17 +17,17 @@ class PlayerTableViewController: UITableViewController {
         title = "Players"
         
         Task {
-            async let players = getPlayers()
-            async let seasonStatistics = getSeasonStatistics()
+            async let players: () = getPlayers()
+            async let seasonStatistics: () = getSeasonStatistics()
             
-            self.players = await players
-            self.seasonStatistics = await seasonStatistics
+            await players
+            await seasonStatistics
             
             tableView.reloadData()
         }
     }
     
-    func getSeasonStatistics() async -> [String: SeasonStatistics] {
+    func getSeasonStatistics() async {
         do {
             let url = URL(string: "https://api.sleeper.com/stats/nfl/2021?season_type=regular")!
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -41,16 +42,14 @@ class PlayerTableViewController: UITableViewController {
                     statistics[stat.playerId] = stat
                 }
                 
-                return statistics
+                self.seasonStatistics = statistics
             }
         } catch {
             print("Failed to get season statistics: \(error)")
         }
-        
-        return [:]
     }
     
-    func getPlayers() async -> [Player] {
+    func getPlayers() async {
         do {
             let url = URL(string: "https://api.sleeper.app/v1/players/nfl")!
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -59,9 +58,9 @@ class PlayerTableViewController: UITableViewController {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             
-            if let players = try? decoder.decode([String: Player].self, from: data) {
+            if let allPlayers = try? decoder.decode([String: Player].self, from: data) {
                 let validPositions = Set(["QB", "RB", "WR", "TE", "K", "DEF"])
-                return players.values
+                let filteredPlayers = allPlayers.values
                     .filter { $0.active && validPositions.contains($0.position ?? "") }
                     .sorted { player1, player2 in
                         if player1.lastName == player2.lastName {
@@ -70,29 +69,30 @@ class PlayerTableViewController: UITableViewController {
                             return player1.lastName < player2.lastName
                         }
                     }
-                
+
+                players = Dictionary(grouping: filteredPlayers, by: { $0.lastName.first! })
+                sections = players.keys.sorted()
             }
         } catch {
             print("Failed to get players: \(error)")
         }
-        
-        return []
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return players.count
+        players[sections[section]]!.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
 
-        let player = players[indexPath.row]
+        let section = sections[indexPath.section]
+        let player = players[section]![indexPath.row]
         let statistics = seasonStatistics[player.playerId]
         cell.textLabel?.text = "\(player.firstName) \(player.lastName)"
         
@@ -103,5 +103,9 @@ class PlayerTableViewController: UITableViewController {
         }
 
         return cell
+    }
+    
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        sections.map { $0.isLetter ? String($0) : "#" }
     }
 }
