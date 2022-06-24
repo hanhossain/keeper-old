@@ -9,25 +9,59 @@ import UIKit
 
 class PlayerTableViewController: UITableViewController {
     private var players = [Player]()
+    private var seasonStatistics = [String: SeasonStatistics]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Players"
         
         Task {
-            await getPlayers()
+            async let players = getPlayers()
+            async let seasonStatistics = getSeasonStatistics()
+            
+            self.players = await players
+            self.seasonStatistics = await seasonStatistics
+            
+            tableView.reloadData()
         }
     }
     
-    func getPlayers() async {
+    func getSeasonStatistics() async -> [String: SeasonStatistics] {
+        do {
+            let url = URL(string: "https://api.sleeper.com/stats/nfl/2021?season_type=regular")!
+            let (data, _) = try await URLSession.shared.data(from: url)
+            print("Received season statistics")
+            
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            
+            if let seasonStatistics = try? decoder.decode([SeasonStatistics].self, from: data) {
+                var statistics = [String: SeasonStatistics]()
+                for stat in seasonStatistics {
+                    statistics[stat.playerId] = stat
+                }
+                
+                return statistics
+            }
+        } catch {
+            print("Failed to get season statistics: \(error)")
+        }
+        
+        return [:]
+    }
+    
+    func getPlayers() async -> [Player] {
         do {
             let url = URL(string: "https://api.sleeper.app/v1/players/nfl")!
             let (data, _) = try await URLSession.shared.data(from: url)
+            print("Received players")
+            
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            if let players = try? decoder.decode([String : Player].self, from: data) {
+            
+            if let players = try? decoder.decode([String: Player].self, from: data) {
                 let validPositions = Set(["QB", "RB", "WR", "TE", "K", "DEF"])
-                self.players = players.values
+                return players.values
                     .filter { $0.active && validPositions.contains($0.position ?? "") }
                     .sorted { player1, player2 in
                         if player1.lastName == player2.lastName {
@@ -36,11 +70,13 @@ class PlayerTableViewController: UITableViewController {
                             return player1.lastName < player2.lastName
                         }
                     }
-                tableView.reloadData()
+                
             }
         } catch {
             print("Failed to get players: \(error)")
         }
+        
+        return []
     }
 
     // MARK: - Table view data source
@@ -57,8 +93,14 @@ class PlayerTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath)
 
         let player = players[indexPath.row]
+        let statistics = seasonStatistics[player.playerId]
         cell.textLabel?.text = "\(player.firstName) \(player.lastName)"
-        cell.detailTextLabel?.text = "\(player.position ?? "") - \(player.team ?? "")"
+        
+        if let points = statistics?.stats["pts_std"] {
+            cell.detailTextLabel?.text  = "\(player.position ?? "") - \(player.team ?? "") - \(points)"
+        } else {
+            cell.detailTextLabel?.text  = "\(player.position ?? "") - \(player.team ?? "")"
+        }
 
         return cell
     }
