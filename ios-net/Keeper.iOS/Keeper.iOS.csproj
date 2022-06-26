@@ -148,6 +148,7 @@
         <Compile Include="SubtitleTableViewCell.cs" />
         <Compile Include="Sleeper\Models\SleeperPlayer.cs" />
         <Compile Include="Sleeper\SleeperClient.cs" />
+        <Compile Include="Sleeper\Models\SleeperSeasonStatistics.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

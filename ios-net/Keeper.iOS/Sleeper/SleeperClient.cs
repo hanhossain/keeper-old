@@ -30,5 +30,13 @@ public class SleeperClient
         await using var stream = await response.Content.ReadAsStreamAsync();
         return await JsonSerializer.DeserializeAsync<Dictionary<string, SleeperPlayer>>(stream, _options);
     }
-}
 
+    public async Task<List<SleeperSeasonStatistics>> GetSeasonStatisticsAsync()
+    {
+        using var response = await _client.GetAsync("https://api.sleeper.com/stats/nfl/2021?season_type=regular");
+        response.EnsureSuccessStatusCode();
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonSerializer.DeserializeAsync<List<SleeperSeasonStatistics>>(stream, _options);
+    }
+}
