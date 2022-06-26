@@ -29,7 +29,7 @@ public class PlayersTableViewController : UITableViewController
     public override async void ViewDidLoad()
     {
         base.ViewDidLoad();
-        TableView.RegisterClassForCellReuse<SubtitleTableViewCell>(CellId);
+        TableView.RegisterClassForCellReuse<SubtitleRightDetailViewCell>(CellId);
 
         Title = "Players";
 
@@ -53,21 +53,19 @@ public class PlayersTableViewController : UITableViewController
 
     public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
     {
-        var cell = tableView.DequeueReusableCell<SubtitleTableViewCell>(CellId, indexPath);
+        var cell = tableView.DequeueReusableCell<SubtitleRightDetailViewCell>(CellId, indexPath);
 
         var sectionHeader = _sectionHeaders[indexPath.Section];
         var player = _players[sectionHeader][indexPath.Row];
 
-        cell.TextLabel.Text = $"{player.FirstName} {player.LastName}";
+        cell.MainLabel.Text = $"{player.FirstName} {player.LastName}";
 
         if (_seasonStatistics[player.PlayerId].Stats?.TryGetValue("pts_std", out var points) == true)
         {
-            cell.DetailTextLabel.Text = $"{player.Position} - {player.Team} - {points}";
+            cell.RightLabel.Text = points.ToString();
         }
-        else
-        {
-            cell.DetailTextLabel.Text = $"{player.Position} - {player.Team}";
-        }
+
+        cell.SubtitleLabel.Text = $"{player.Position} - {player.Team}";
 
         return cell;
     }

@@ -27,6 +27,7 @@
         <MtouchLink>None</MtouchLink>
         <MtouchDebug>true</MtouchDebug>
         <LangVersion>latest</LangVersion>
+        <MtouchProfiling>true</MtouchProfiling>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
         <DebugType>none</DebugType>
@@ -149,6 +150,7 @@
         <Compile Include="Sleeper\Models\SleeperPlayer.cs" />
         <Compile Include="Sleeper\SleeperClient.cs" />
         <Compile Include="Sleeper\Models\SleeperSeasonStatistics.cs" />
+        <Compile Include="SubtitleRightDetailViewCell.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
