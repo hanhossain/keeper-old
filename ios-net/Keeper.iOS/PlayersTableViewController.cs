@@ -11,7 +11,7 @@ using UIKit;
 
 namespace Keeper.iOS;
 
-public class PlayersTableViewController : UITableViewController
+public class PlayersTableViewController : UITableViewController, IUISearchResultsUpdating
 {
     private const string CellId = nameof(PlayersTableViewController);
 
@@ -19,6 +19,7 @@ public class PlayersTableViewController : UITableViewController
 
     private List<char> _sectionHeaders = new List<char>();
     private Dictionary<char, List<SleeperPlayer>> _players = new Dictionary<char, List<SleeperPlayer>>();
+    private Dictionary<char, List<SleeperPlayer>> _filteredPlayers = new Dictionary<char, List<SleeperPlayer>>();
     private Dictionary<string, SleeperSeasonStatistics> _seasonStatistics = new Dictionary<string, SleeperSeasonStatistics>();
 
     public PlayersTableViewController(HttpClient httpClient)
@@ -30,8 +31,13 @@ public class PlayersTableViewController : UITableViewController
     {
         base.ViewDidLoad();
         TableView.RegisterClassForCellReuse<SubtitleRightDetailViewCell>(CellId);
-
         Title = "Players";
+
+        var searchController = new UISearchController()
+        {
+            SearchResultsUpdater = this
+        };
+        NavigationItem.SearchController = searchController;
 
         var playersTask = LoadPlayersAsync();
         var statisticsTask = LoadSeasonStatisticsAsync();
@@ -48,7 +54,7 @@ public class PlayersTableViewController : UITableViewController
     public override nint RowsInSection(UITableView tableView, nint section)
     {
         var sectionHeader = _sectionHeaders[(int)section];
-        return _players[sectionHeader].Count;
+        return _filteredPlayers[sectionHeader].Count;
     }
 
     public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -56,7 +62,7 @@ public class PlayersTableViewController : UITableViewController
         var cell = tableView.DequeueReusableCell<SubtitleRightDetailViewCell>(CellId, indexPath);
 
         var sectionHeader = _sectionHeaders[indexPath.Section];
-        var player = _players[sectionHeader][indexPath.Row];
+        var player = _filteredPlayers[sectionHeader][indexPath.Row];
 
         cell.MainLabel.Text = $"{player.FirstName} {player.LastName}";
 
@@ -79,9 +85,18 @@ public class PlayersTableViewController : UITableViewController
     {
         var validPositions = new HashSet<string>() { "QB", "RB", "WR", "TE", "K", "DEF" };
         var players = await _sleeperClient.GetPlayersAsync();
-        _players = players
+
+        var playerQuery = players
             .Values
-            .Where(x => x.Active && validPositions.Contains(x.Position))
+            .Where(x => x.Active && validPositions.Contains(x.Position));
+        _players = ProcessPlayers(playerQuery);
+
+        FilterPlayers(_players);
+    }
+
+    private Dictionary<char, List<SleeperPlayer>> ProcessPlayers(IEnumerable<SleeperPlayer> players)
+    {
+        return players
             .GroupBy(x =>
             {
                 var firstLetter = x.LastName.First();
@@ -92,13 +107,38 @@ public class PlayersTableViewController : UITableViewController
                 x => x.OrderBy(y => y.LastName)
                     .ThenBy(y => y.FirstName)
                     .ToList());
+    }
 
-        _sectionHeaders = _players.Keys.OrderBy(x => x).ToList();
+    private void FilterPlayers(Dictionary<char, List<SleeperPlayer>> players)
+    {
+        _filteredPlayers = players;
+        _sectionHeaders = players.Keys.OrderBy(x => x).ToList();
     }
 
     private async Task LoadSeasonStatisticsAsync()
     {
         var statistics = await _sleeperClient.GetSeasonStatisticsAsync();
         _seasonStatistics = statistics.ToDictionary(x => x.PlayerId);
+    }
+
+    public void UpdateSearchResultsForSearchController(UISearchController searchController)
+    {
+        var query = searchController.SearchBar.Text;
+
+        if (string.IsNullOrEmpty(query))
+        {
+            FilterPlayers(_players);
+        }
+        else
+        {
+            var playerQuery = _players
+                .Values
+                .SelectMany(x => x)
+                .Where(x => $"{x.FirstName} {x.LastName}".Contains(query, StringComparison.InvariantCultureIgnoreCase));
+            var filteredPlayers = ProcessPlayers(playerQuery);
+            FilterPlayers(filteredPlayers);
+        }
+
+        TableView.ReloadData();
     }
 }
