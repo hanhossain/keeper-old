@@ -81,6 +81,27 @@ public class PlayersTableViewController : UITableViewController, IUISearchResult
         return _sectionHeaders.Select(x => x.ToString()).ToArray();
     }
 
+    public void UpdateSearchResultsForSearchController(UISearchController searchController)
+    {
+        var query = searchController.SearchBar.Text;
+
+        if (string.IsNullOrEmpty(query))
+        {
+            FilterPlayers(_players);
+        }
+        else
+        {
+            var playerQuery = _players
+                .Values
+                .SelectMany(x => x)
+                .Where(x => $"{x.FirstName} {x.LastName}".Contains(query, StringComparison.InvariantCultureIgnoreCase));
+            var filteredPlayers = ProcessPlayers(playerQuery);
+            FilterPlayers(filteredPlayers);
+        }
+
+        TableView.ReloadData();
+    }
+
     private async Task LoadPlayersAsync()
     {
         var validPositions = new HashSet<string>() { "QB", "RB", "WR", "TE", "K", "DEF" };
@@ -119,26 +140,5 @@ public class PlayersTableViewController : UITableViewController, IUISearchResult
     {
         var statistics = await _sleeperClient.GetSeasonStatisticsAsync();
         _seasonStatistics = statistics.ToDictionary(x => x.PlayerId);
-    }
-
-    public void UpdateSearchResultsForSearchController(UISearchController searchController)
-    {
-        var query = searchController.SearchBar.Text;
-
-        if (string.IsNullOrEmpty(query))
-        {
-            FilterPlayers(_players);
-        }
-        else
-        {
-            var playerQuery = _players
-                .Values
-                .SelectMany(x => x)
-                .Where(x => $"{x.FirstName} {x.LastName}".Contains(query, StringComparison.InvariantCultureIgnoreCase));
-            var filteredPlayers = ProcessPlayers(playerQuery);
-            FilterPlayers(filteredPlayers);
-        }
-
-        TableView.ReloadData();
     }
 }
