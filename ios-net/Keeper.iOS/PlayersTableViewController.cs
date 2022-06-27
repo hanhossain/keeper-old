@@ -81,6 +81,17 @@ public class PlayersTableViewController : UITableViewController, IUISearchResult
         return _sectionHeaders.Select(x => x.ToString()).ToArray();
     }
 
+    public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+    {
+        var sectionHeader = _sectionHeaders[indexPath.Section];
+        var player = _filteredPlayers[sectionHeader][indexPath.Row];
+        var seasonStatistics = _seasonStatistics[player.PlayerId];
+
+        var playerDetailController = new PlayerDetailViewController(player, _sleeperClient, seasonStatistics);
+
+        NavigationController.PushViewController(playerDetailController, true);
+    }
+
     public void UpdateSearchResultsForSearchController(UISearchController searchController)
     {
         var query = searchController.SearchBar.Text;

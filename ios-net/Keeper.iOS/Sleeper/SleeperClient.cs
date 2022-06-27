@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -38,5 +39,20 @@ public class SleeperClient
 
         await using var stream = await response.Content.ReadAsStreamAsync();
         return await JsonSerializer.DeserializeAsync<List<SleeperSeasonStatistics>>(stream, _options);
+    }
+
+    public async Task<byte[]> GetAvatarAsync(string playerId)
+    {
+        var uri = char.IsLetter(playerId[0])
+            ? $"https://sleepercdn.com/images/team_logos/nfl/{playerId.ToLower()}.png"
+            : $"https://sleepercdn.com/content/nfl/players/{playerId}.jpg";
+        using var response = await _client.GetAsync(uri);
+
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+
+        return null;
     }
 }

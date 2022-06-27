@@ -151,6 +151,8 @@
         <Compile Include="Sleeper\SleeperClient.cs" />
         <Compile Include="Sleeper\Models\SleeperSeasonStatistics.cs" />
         <Compile Include="SubtitleRightDetailViewCell.cs" />
+        <Compile Include="PlayerDetailViewController.cs" />
+        <Compile Include="RightDetailTableViewCell.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
