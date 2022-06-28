@@ -55,4 +55,13 @@ public class SleeperClient
 
         return null;
     }
+
+    public async Task<Dictionary<int, SleeperPlayerStatistics>> GetPlayerStatisticsAsync(string playerId)
+    {
+        using var response = await _client.GetAsync($"https://api.sleeper.com/stats/nfl/player/{playerId}?season_type=regular&season=2021&grouping=week");
+        response.EnsureSuccessStatusCode();
+
+        await using var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonSerializer.DeserializeAsync<Dictionary<int, SleeperPlayerStatistics>>(stream, _options);
+    }
 }

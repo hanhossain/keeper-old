@@ -9,7 +9,7 @@ using UIKit;
 
 namespace Keeper.iOS;
 
-public class PlayerDetailViewController : UIViewController, IUITableViewDataSource
+public class PlayerDetailViewController : UIViewController, IUITableViewDataSource, IUITableViewDelegate
 {
     private const string CellId = nameof(PlayerDetailViewController);
 
@@ -17,6 +17,9 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
     private readonly SleeperClient _sleeperClient;
     private readonly SleeperSeasonStatistics _seasonStatistics;
     private readonly List<string> _statisticsKeys;
+
+    private Dictionary<int, SleeperPlayerStatistics> _statistics;
+    private Dictionary<string, Dictionary<int, double>> _aggregatedStatistics;
 
     public PlayerDetailViewController(SleeperPlayer player, SleeperClient sleeperClient, SleeperSeasonStatistics seasonStatistics)
     {
@@ -48,6 +51,23 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
         var metadataStackView = new UIStackView();
         stackView.AddArrangedSubview(metadataStackView);
 
+        _statistics = await _sleeperClient.GetPlayerStatisticsAsync(_player.PlayerId);
+
+        _aggregatedStatistics = _statistics
+            .Values
+            .Where(x => x != null)
+            .SelectMany(
+                x => x.Stats.Select(y => new
+                {
+                    Week = x.Week,
+                    Stat = y.Key,
+                    Value = y.Value
+                }))
+            .GroupBy(x => x.Stat)
+            .ToDictionary(
+                x => x.Key,
+                x => x.ToDictionary(y => y.Week, y => y.Value));
+
         var avatarBytes = await _sleeperClient.GetAvatarAsync(_player.PlayerId);
         var avatarImage = avatarBytes == null
             ? UIImage.GetSystemImage("person.fill.questionmark", UIImageSymbolConfiguration.Create(71))
@@ -67,7 +87,8 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
 
         var tableView = new UITableView()
         {
-            DataSource = this
+            DataSource = this,
+            Delegate = this
         };
         stackView.AddArrangedSubview(tableView);
 
@@ -90,7 +111,34 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
         cell.TextLabel.Text = key;
         cell.DetailTextLabel.Text = value.ToString();
 
+        if (_aggregatedStatistics.ContainsKey(key))
+        {
+            cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+        }
+        else
+        {
+            cell.Accessory = UITableViewCellAccessory.None;
+        }
+
         return cell;
+    }
+
+    #endregion
+
+    #region IUITableViewDelegate
+
+    [Export("tableView:didSelectRowAtIndexPath:")]
+    public void RowSelected(UITableView tableView, NSIndexPath indexPath)
+    {
+        var key = _statisticsKeys[indexPath.Row];
+
+        if (_aggregatedStatistics.TryGetValue(key, out var aggregatedStatistics))
+        {
+            var statisticViewController = new StatisticDetailViewController(key, aggregatedStatistics.Values);
+            NavigationController.PushViewController(statisticViewController, true);
+        }
+
+        tableView.DeselectRow(indexPath, true);
     }
 
     #endregion

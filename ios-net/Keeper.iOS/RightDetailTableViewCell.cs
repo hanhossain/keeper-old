@@ -7,8 +7,7 @@ public class RightDetailTableViewCell : UITableViewCell
 {
     [Export("initWithStyle:reuseIdentifier:")]
     public RightDetailTableViewCell(UITableViewCellStyle style, string reuseIdentifier)
-        : base(UITableViewCellStyle.Subtitle, reuseIdentifier)
+        : base(UITableViewCellStyle.Value1, reuseIdentifier)
     {
     }
 }
-
