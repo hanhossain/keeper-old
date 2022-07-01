@@ -13,6 +13,7 @@ class PlayerTableViewController: UITableViewController {
     private var seasonStatistics = [String: SeasonStatistics]()
     
     private let cellId = "playerCell"
+    private let sleeperClient = SleeperClient()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +21,7 @@ class PlayerTableViewController: UITableViewController {
         title = "Players"
         
         Task {
-            async let players: () = getPlayers()
+            async let players: () = loadPlayers()
             async let seasonStatistics: () = getSeasonStatistics()
             
             await players
@@ -32,50 +33,36 @@ class PlayerTableViewController: UITableViewController {
     
     func getSeasonStatistics() async {
         do {
-            let url = URL(string: "https://api.sleeper.com/stats/nfl/2021?season_type=regular")!
-            let (data, _) = try await URLSession.shared.data(from: url)
-            print("Received season statistics")
+            let seasonStatistics = try await sleeperClient.getSeasonStatistics()
             
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            if let seasonStatistics = try? decoder.decode([SeasonStatistics].self, from: data) {
-                var statistics = [String: SeasonStatistics]()
-                for stat in seasonStatistics {
-                    statistics[stat.playerId] = stat
-                }
-                
-                self.seasonStatistics = statistics
+            var statistics = [String: SeasonStatistics]()
+            for stat in seasonStatistics {
+                statistics[stat.playerId] = stat
             }
+            
+            self.seasonStatistics = statistics
         } catch {
             print("Failed to get season statistics: \(error)")
         }
     }
     
-    func getPlayers() async {
+    func loadPlayers() async {
         do {
-            let url = URL(string: "https://api.sleeper.app/v1/players/nfl")!
-            let (data, _) = try await URLSession.shared.data(from: url)
-            print("Received players")
+            let allPlayers = try await sleeperClient.getPlayers()
             
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            if let allPlayers = try? decoder.decode([String: Player].self, from: data) {
-                let validPositions = Set(["QB", "RB", "WR", "TE", "K", "DEF"])
-                let filteredPlayers = allPlayers.values
-                    .filter { $0.active && validPositions.contains($0.position ?? "") }
-                    .sorted { player1, player2 in
-                        if player1.lastName == player2.lastName {
-                            return player1.firstName < player2.firstName
-                        } else {
-                            return player1.lastName < player2.lastName
-                        }
+            let validPositions = Set(["QB", "RB", "WR", "TE", "K", "DEF"])
+            let filteredPlayers = allPlayers.values
+                .filter { $0.active && validPositions.contains($0.position ?? "") }
+                .sorted { player1, player2 in
+                    if player1.lastName == player2.lastName {
+                        return player1.firstName < player2.firstName
+                    } else {
+                        return player1.lastName < player2.lastName
                     }
+                }
 
-                players = Dictionary(grouping: filteredPlayers, by: { $0.lastName.first! })
-                sections = players.keys.sorted()
-            }
+            players = Dictionary(grouping: filteredPlayers, by: { $0.lastName.first! })
+            sections = players.keys.sorted()
         } catch {
             print("Failed to get players: \(error)")
         }
