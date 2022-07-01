@@ -88,7 +88,8 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
         var tableView = new UITableView()
         {
             DataSource = this,
-            Delegate = this
+            Delegate = this,
+            BackgroundColor = UIColor.SystemBackground
         };
         stackView.AddArrangedSubview(tableView);
 
