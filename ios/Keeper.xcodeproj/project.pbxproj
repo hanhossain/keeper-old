@@ -43,6 +43,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		590577C8286EDFBD000C2D31 /* Sleeper */ = {
+			isa = PBXGroup;
+			children = (
+				59A1118F2864EA9700A0EA34 /* Player.swift */,
+				59A111912865170200A0EA34 /* SeasonStatistics.swift */,
+				590577C6286ED237000C2D31 /* SleeperClient.swift */,
+			);
+			path = Sleeper;
+			sourceTree = "<group>";
+		};
 		59A1116D2864E95700A0EA34 = {
 			isa = PBXGroup;
 			children = (
@@ -62,16 +72,14 @@
 		59A111782864E95700A0EA34 /* Keeper */ = {
 			isa = PBXGroup;
 			children = (
+				590577C8286EDFBD000C2D31 /* Sleeper */,
 				59A111792864E95700A0EA34 /* AppDelegate.swift */,
 				59A1117B2864E95700A0EA34 /* SceneDelegate.swift */,
 				59A111822864E95800A0EA34 /* Assets.xcassets */,
 				59A111842864E95800A0EA34 /* LaunchScreen.storyboard */,
 				59A111872864E95800A0EA34 /* Info.plist */,
 				59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */,
-				59A1118F2864EA9700A0EA34 /* Player.swift */,
-				59A111912865170200A0EA34 /* SeasonStatistics.swift */,
 				59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */,
-				590577C6286ED237000C2D31 /* SleeperClient.swift */,
 			);
 			path = Keeper;
 			sourceTree = "<group>";
