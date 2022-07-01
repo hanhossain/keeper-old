@@ -50,11 +50,19 @@
 		590577C8286EDFBD000C2D31 /* Sleeper */ = {
 			isa = PBXGroup;
 			children = (
-				59A1118F2864EA9700A0EA34 /* Player.swift */,
-				59A111912865170200A0EA34 /* SeasonStatistics.swift */,
+				590577CD286F760B000C2D31 /* Models */,
 				590577C6286ED237000C2D31 /* SleeperClient.swift */,
 			);
 			path = Sleeper;
+			sourceTree = "<group>";
+		};
+		590577CD286F760B000C2D31 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				59A1118F2864EA9700A0EA34 /* Player.swift */,
+				59A111912865170200A0EA34 /* SeasonStatistics.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		59A1116D2864E95700A0EA34 = {
