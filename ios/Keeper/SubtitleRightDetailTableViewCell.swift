@@ -26,19 +26,13 @@ class SubtitleRightDetailTableViewCell: UITableViewCell {
         leftStackView.spacing = 8
         
         let mainStackView = UIStackView(arrangedSubviews: [leftStackView, rightLabel])
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
         mainStackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         mainStackView.isLayoutMarginsRelativeArrangement = true
         mainStackView.spacing = 4
         mainStackView.distribution = .equalSpacing
         
         contentView.addSubview(mainStackView)
-        NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            mainStackView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            mainStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
+        mainStackView.pin(to: contentView)
     }
     
     required init?(coder: NSCoder) {

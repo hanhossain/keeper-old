@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		590577C7286ED237000C2D31 /* SleeperClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590577C6286ED237000C2D31 /* SleeperClient.swift */; };
+		590577CA286EE015000C2D31 /* PlayerDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590577C9286EE015000C2D31 /* PlayerDetailViewController.swift */; };
+		590577CC286EE590000C2D31 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590577CB286EE590000C2D31 /* UIView+Extensions.swift */; };
 		59A1117A2864E95700A0EA34 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A111792864E95700A0EA34 /* AppDelegate.swift */; };
 		59A1117C2864E95700A0EA34 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1117B2864E95700A0EA34 /* SceneDelegate.swift */; };
 		59A111832864E95800A0EA34 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A111822864E95800A0EA34 /* Assets.xcassets */; };
@@ -20,6 +22,8 @@
 
 /* Begin PBXFileReference section */
 		590577C6286ED237000C2D31 /* SleeperClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleeperClient.swift; sourceTree = "<group>"; };
+		590577C9286EE015000C2D31 /* PlayerDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailViewController.swift; sourceTree = "<group>"; };
+		590577CB286EE590000C2D31 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		59A111762864E95700A0EA34 /* Keeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59A111792864E95700A0EA34 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		59A1117B2864E95700A0EA34 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +84,8 @@
 				59A111872864E95800A0EA34 /* Info.plist */,
 				59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */,
 				59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */,
+				590577C9286EE015000C2D31 /* PlayerDetailViewController.swift */,
+				590577CB286EE590000C2D31 /* UIView+Extensions.swift */,
 			);
 			path = Keeper;
 			sourceTree = "<group>";
@@ -157,7 +163,9 @@
 				59A111922865170200A0EA34 /* SeasonStatistics.swift in Sources */,
 				59A111902864EA9700A0EA34 /* Player.swift in Sources */,
 				59A1117A2864E95700A0EA34 /* AppDelegate.swift in Sources */,
+				590577CC286EE590000C2D31 /* UIView+Extensions.swift in Sources */,
 				59A1118E2864E9DA00A0EA34 /* PlayerTableViewController.swift in Sources */,
+				590577CA286EE015000C2D31 /* PlayerDetailViewController.swift in Sources */,
 				59A1117C2864E95700A0EA34 /* SceneDelegate.swift in Sources */,
 				590577C7286ED237000C2D31 /* SleeperClient.swift in Sources */,
 				59A111C22865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift in Sources */,

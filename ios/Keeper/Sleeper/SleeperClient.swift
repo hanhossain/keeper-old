@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class SleeperClient {
     private let decoder: JSONDecoder = {
@@ -26,5 +27,22 @@ class SleeperClient {
         let (data, _) = try await URLSession.shared.data(from: url)
         
         return try decoder.decode([SeasonStatistics].self, from: data)
+    }
+    
+    func getAvatar(playerId: String) async throws -> UIImage? {
+        let uri = playerId.first!.isLetter
+            ? "https://sleepercdn.com/images/team_logos/nfl/\(playerId.lowercased()).png"
+            : "https://sleepercdn.com/content/nfl/players/\(playerId).jpg"
+        
+        let url = URL(string: uri)!
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard
+            let httpResponse = response as? HTTPURLResponse,
+            httpResponse.statusCode == 200 else {
+            return nil
+        }
+        
+        return UIImage(data: data)
     }
 }

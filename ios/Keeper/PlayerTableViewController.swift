@@ -19,6 +19,7 @@ class PlayerTableViewController: UITableViewController, UISearchResultsUpdating 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Players"
+        view.backgroundColor = .systemBackground
         tableView.register(SubtitleRightDetailTableViewCell.self, forCellReuseIdentifier: cellId)
         
         let searchController = UISearchController()
@@ -112,6 +113,14 @@ class PlayerTableViewController: UITableViewController, UISearchResultsUpdating 
     
     override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         sectionHeaders.map { $0.isLetter ? String($0) : "#" }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let sectionHeader = sectionHeaders[indexPath.section]
+        let player = filteredPlayers[sectionHeader]![indexPath.row]
+        
+        let viewController = PlayerDetailViewController(player: player, sleeperClient: sleeperClient)
+        navigationController?.pushViewController(viewController, animated: true)
     }
     
     // MARK: - UISearchResultsUpdating
