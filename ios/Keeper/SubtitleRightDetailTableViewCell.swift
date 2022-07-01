@@ -8,10 +8,42 @@
 import UIKit
 
 class SubtitleRightDetailTableViewCell: UITableViewCell {
-
-    @IBOutlet weak var mainText: UILabel!
-    @IBOutlet weak var subtitle: UILabel!
-    @IBOutlet weak var rightDetail: UILabel!
+    
+    let mainLabel = UILabel()
+    let rightLabel = UILabel()
+    
+    let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .caption1)
+        return label
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        let leftStackView = UIStackView(arrangedSubviews: [mainLabel, subtitleLabel])
+        leftStackView.axis = .vertical
+        leftStackView.spacing = 8
+        
+        let mainStackView = UIStackView(arrangedSubviews: [leftStackView, rightLabel])
+        mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        mainStackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        mainStackView.isLayoutMarginsRelativeArrangement = true
+        mainStackView.spacing = 4
+        mainStackView.distribution = .equalSpacing
+        
+        contentView.addSubview(mainStackView)
+        NSLayoutConstraint.activate([
+            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            mainStackView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            mainStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()

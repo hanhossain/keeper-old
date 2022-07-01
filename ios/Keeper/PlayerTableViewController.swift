@@ -11,9 +11,12 @@ class PlayerTableViewController: UITableViewController {
     private var sections = [Character]()
     private var players = [Character: [Player]]()
     private var seasonStatistics = [String: SeasonStatistics]()
+    
+    private let cellId = "playerCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(SubtitleRightDetailTableViewCell.self, forCellReuseIdentifier: cellId)
         title = "Players"
         
         Task {
@@ -89,17 +92,18 @@ class PlayerTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "playerCell", for: indexPath) as! SubtitleRightDetailTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! SubtitleRightDetailTableViewCell
 
         let section = sections[indexPath.section]
         let player = players[section]![indexPath.row]
         let statistics = seasonStatistics[player.playerId]
 
-        cell.mainText.text = "\(player.firstName) \(player.lastName)"
-        cell.subtitle.text = "\(player.position ?? "") - \(player.team ?? "")"
+        cell.mainLabel.text = "\(player.firstName) \(player.lastName)"
+        cell.subtitleLabel.text = "\(player.position ?? "") - \(player.team ?? "")"
 
-        let points = statistics?.stats["pts_std"] ?? 0
-        cell.rightDetail.text = String(points)
+        if let points = statistics?.stats["pts_std"] {
+            cell.rightLabel.text = String(points)
+        }
 
         return cell
     }
