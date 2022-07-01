@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    </PropertyGroup>
+    <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
         <ProjectGuid>{C1DF26E8-A4A4-4B42-A557-42CE164E045A}</ProjectGuid>
@@ -71,16 +74,12 @@
         <Reference Include="System.Xml" />
         <Reference Include="System.Core" />
         <Reference Include="Xamarin.iOS" />
-        <Reference Include="System.Numerics" />
-        <Reference Include="System.Numerics.Vectors" />
+        <Reference Include="System.Net.Http" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
       <PackageReference Include="System.Text.Json">
         <Version>6.0.5</Version>
-      </PackageReference>
-      <PackageReference Include="System.Net.Http">
-        <Version>4.3.4</Version>
       </PackageReference>
       <PackageReference Include="MathNet.Numerics">
         <Version>5.0.0</Version>
