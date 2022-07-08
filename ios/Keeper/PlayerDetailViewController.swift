@@ -16,7 +16,7 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
     
     private var tableView: UITableView!
     private var playerStatistics = [Int: PlayerStatistics?]()
-    private var aggregatedStatsitics = [String: [(stat: String, week: Int, value: Double?)]]()
+    private var aggregatedStatistics = [String: [(stat: String, week: Int, value: Double?)]]()
     
     init(player: Player, sleeperClient: SleeperClient, seasonStatistics: SeasonStatistics) {
         self.player = player
@@ -63,7 +63,7 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
             avatarView.contentMode = .scaleAspectFit
             
             playerStatistics = try! await sleeperClient.getPlayerStatistics(playerId: player.playerId)
-            aggregatedStatsitics = Dictionary(grouping: playerStatistics
+            aggregatedStatistics = Dictionary(grouping: playerStatistics
                 .values
                 .compactMap { $0 }
                 .flatMap { statistics in
@@ -72,6 +72,8 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
             
 
             metadataStackView.insertArrangedSubview(avatarView, at: 0)
+            
+            tableView.reloadData()
         }
     }
     
@@ -89,6 +91,12 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
         cell.textLabel?.text = statKey
         cell.detailTextLabel?.text = String(statValue)
         
+        if aggregatedStatistics[statKey] == nil {
+            cell.accessoryType = .none
+        } else {
+            cell.accessoryType = .disclosureIndicator
+        }
+        
         return cell
     }
     
@@ -96,7 +104,7 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let statKey = statisticsKeys[indexPath.row]
-        guard let aggregatedStats = aggregatedStatsitics[statKey] else {
+        guard let aggregatedStats = aggregatedStatistics[statKey] else {
             tableView.deselectRow(at: indexPath, animated: true)
             return
         }
