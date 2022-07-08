@@ -10,6 +10,8 @@ import UIKit
 class PlayerDetailViewController: UIViewController, UITableViewDataSource {
     private let player: Player
     private let sleeperClient: SleeperClient
+    private let seasonStatistics: SeasonStatistics
+    private let statisticsKeys: [String]
     
     private let cellId = "playerDetailCell"
     
@@ -18,6 +20,9 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource {
     init(player: Player, sleeperClient: SleeperClient, seasonStatistics: SeasonStatistics) {
         self.player = player
         self.sleeperClient = sleeperClient
+        self.seasonStatistics = seasonStatistics
+        statisticsKeys = seasonStatistics.stats.keys.sorted()
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -62,12 +67,16 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource {
     // MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return statisticsKeys.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let statKey = statisticsKeys[indexPath.row]
+        let statValue = seasonStatistics.stats[statKey]!
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-        cell.textLabel?.text = "Hello world"
+        cell.textLabel?.text = statKey
+        cell.detailTextLabel?.text = String(statValue)
         
         return cell
     }
