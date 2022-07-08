@@ -20,6 +20,7 @@
 		59A111C22865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */; };
 		59B081B92877EEBF00370BDA /* RightDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */; };
 		59B081BC2877F52000370BDA /* StatisticDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081BB2877F52000370BDA /* StatisticDetailViewController.swift */; };
+		59B081C02877F91500370BDA /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 59B081BF2877F91500370BDA /* Charts */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59B081C02877F91500370BDA /* Charts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +138,9 @@
 			dependencies = (
 			);
 			name = Keeper;
+			packageProductDependencies = (
+				59B081BF2877F91500370BDA /* Charts */,
+			);
 			productName = Keeper;
 			productReference = 59A111762864E95700A0EA34 /* Keeper.app */;
 			productType = "com.apple.product-type.application";
@@ -164,6 +169,9 @@
 				Base,
 			);
 			mainGroup = 59A1116D2864E95700A0EA34;
+			packageReferences = (
+				59B081BE2877F91500370BDA /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			productRefGroup = 59A111772864E95700A0EA34 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -408,6 +416,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		59B081BE2877F91500370BDA /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		59B081BF2877F91500370BDA /* Charts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59B081BE2877F91500370BDA /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = Charts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 59A1116E2864E95700A0EA34 /* Project object */;
 }
