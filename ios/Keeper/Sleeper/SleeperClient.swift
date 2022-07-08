@@ -45,4 +45,11 @@ class SleeperClient {
         
         return UIImage(data: data)
     }
+    
+    func getPlayerStatistics(playerId: String) async throws -> [Int: PlayerStatistics?] {
+        let url = URL(string: "https://api.sleeper.com/stats/nfl/player/\(playerId)?season_type=regular&season=2021&grouping=week")!
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let response = try decoder.decode([String: PlayerStatistics?].self, from: data)
+        return Dictionary(uniqueKeysWithValues: response.map { (Int($0.key)!, $0.value) })
+    }
 }

@@ -21,6 +21,7 @@
 		59B081B92877EEBF00370BDA /* RightDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */; };
 		59B081BC2877F52000370BDA /* StatisticDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081BB2877F52000370BDA /* StatisticDetailViewController.swift */; };
 		59B081C02877F91500370BDA /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 59B081BF2877F91500370BDA /* Charts */; };
+		59B081C42877FA7900370BDA /* PlayerStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081C32877FA7900370BDA /* PlayerStatistics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleRightDetailTableViewCell.swift; sourceTree = "<group>"; };
 		59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightDetailTableViewCell.swift; sourceTree = "<group>"; };
 		59B081BB2877F52000370BDA /* StatisticDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticDetailViewController.swift; sourceTree = "<group>"; };
+		59B081C32877FA7900370BDA /* PlayerStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStatistics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 			children = (
 				59A1118F2864EA9700A0EA34 /* Player.swift */,
 				59A111912865170200A0EA34 /* SeasonStatistics.swift */,
+				59B081C32877FA7900370BDA /* PlayerStatistics.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -207,6 +210,7 @@
 				59B081BC2877F52000370BDA /* StatisticDetailViewController.swift in Sources */,
 				590577CA286EE015000C2D31 /* PlayerDetailViewController.swift in Sources */,
 				59A1117C2864E95700A0EA34 /* SceneDelegate.swift in Sources */,
+				59B081C42877FA7900370BDA /* PlayerStatistics.swift in Sources */,
 				590577C7286ED237000C2D31 /* SleeperClient.swift in Sources */,
 				59A111C22865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift in Sources */,
 			);

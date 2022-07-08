@@ -12,10 +12,11 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
     private let sleeperClient: SleeperClient
     private let seasonStatistics: SeasonStatistics
     private let statisticsKeys: [String]
-    
     private let cellId = "playerDetailCell"
     
     private var tableView: UITableView!
+    private var playerStatistics = [Int: PlayerStatistics?]()
+    private var aggregatedStatsitics = [String: [(stat: String, week: Int, value: Double?)]]()
     
     init(player: Player, sleeperClient: SleeperClient, seasonStatistics: SeasonStatistics) {
         self.player = player
@@ -60,6 +61,15 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
             let avatarView = UIImageView(image: avatar)
             avatarView.tintColor = .systemGray
             avatarView.contentMode = .scaleAspectFit
+            
+            playerStatistics = try! await sleeperClient.getPlayerStatistics(playerId: player.playerId)
+            aggregatedStatsitics = Dictionary(grouping: playerStatistics
+                .values
+                .compactMap { $0 }
+                .flatMap { statistics in
+                    return statistics.stats.map { (stat: $0.key, week: statistics.week, value: $0.value) }
+                }) { $0.stat }
+            
 
             metadataStackView.insertArrangedSubview(avatarView, at: 0)
         }
@@ -86,7 +96,12 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let statKey = statisticsKeys[indexPath.row]
-        let vc = StatisticDetailViewController(statName: statKey)
+        guard let aggregatedStats = aggregatedStatsitics[statKey] else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        
+        let vc = StatisticDetailViewController(statName: statKey, aggregatedStatistics: aggregatedStats)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
