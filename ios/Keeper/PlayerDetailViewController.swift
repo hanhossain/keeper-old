@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PlayerDetailViewController: UIViewController, UITableViewDataSource {
+class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let player: Player
     private let sleeperClient: SleeperClient
     private let seasonStatistics: SeasonStatistics
@@ -38,6 +38,7 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource {
         tableView = UITableView()
         tableView.backgroundColor = .systemBackground
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(RightDetailTableViewCell.self, forCellReuseIdentifier: cellId)
         
         let metadataStackView = UIStackView()
@@ -79,5 +80,13 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource {
         cell.detailTextLabel?.text = String(statValue)
         
         return cell
+    }
+    
+    // MARK: - UITableViewDelegate
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let statKey = statisticsKeys[indexPath.row]
+        let vc = StatisticDetailViewController(statName: statKey)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

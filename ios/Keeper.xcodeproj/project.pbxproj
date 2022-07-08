@@ -19,6 +19,7 @@
 		59A111922865170200A0EA34 /* SeasonStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A111912865170200A0EA34 /* SeasonStatistics.swift */; };
 		59A111C22865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */; };
 		59B081B92877EEBF00370BDA /* RightDetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */; };
+		59B081BC2877F52000370BDA /* StatisticDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081BB2877F52000370BDA /* StatisticDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		59A111912865170200A0EA34 /* SeasonStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonStatistics.swift; sourceTree = "<group>"; };
 		59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleRightDetailTableViewCell.swift; sourceTree = "<group>"; };
 		59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightDetailTableViewCell.swift; sourceTree = "<group>"; };
+		59B081BB2877F52000370BDA /* StatisticDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 				59A111872864E95800A0EA34 /* Info.plist */,
 				59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */,
 				590577C9286EE015000C2D31 /* PlayerDetailViewController.swift */,
+				59B081BB2877F52000370BDA /* StatisticDetailViewController.swift */,
 				590577CB286EE590000C2D31 /* UIView+Extensions.swift */,
 			);
 			path = Keeper;
@@ -185,6 +188,7 @@
 				59B081B92877EEBF00370BDA /* RightDetailTableViewCell.swift in Sources */,
 				590577CC286EE590000C2D31 /* UIView+Extensions.swift in Sources */,
 				59A1118E2864E9DA00A0EA34 /* PlayerTableViewController.swift in Sources */,
+				59B081BC2877F52000370BDA /* StatisticDetailViewController.swift in Sources */,
 				590577CA286EE015000C2D31 /* PlayerDetailViewController.swift in Sources */,
 				59A1117C2864E95700A0EA34 /* SceneDelegate.swift in Sources */,
 				590577C7286ED237000C2D31 /* SleeperClient.swift in Sources */,
