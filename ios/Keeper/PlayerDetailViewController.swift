@@ -26,7 +26,13 @@ class PlayerDetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "\(player.firstName) \(player.lastName)"
         
-        let stackView = UIStackView()
+        let metadataStackView = UIStackView()
+        
+        let positionTeamLabel = UILabel()
+        positionTeamLabel.text = "\(player.position ?? "") - \(player.team ?? "")"
+        metadataStackView.addArrangedSubview(positionTeamLabel)
+        
+        let stackView = UIStackView(arrangedSubviews: [metadataStackView])
         stackView.axis = .vertical
         
         view.addSubview(stackView)
@@ -38,8 +44,8 @@ class PlayerDetailViewController: UIViewController {
             let avatarView = UIImageView(image: avatar)
             avatarView.tintColor = .systemGray
             avatarView.contentMode = .scaleAspectFit
-            
-            stackView.addArrangedSubview(avatarView)
+
+            metadataStackView.insertArrangedSubview(avatarView, at: 0)
         }
     }
 }
