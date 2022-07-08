@@ -86,6 +86,7 @@
 		59A111782864E95700A0EA34 /* Keeper */ = {
 			isa = PBXGroup;
 			children = (
+				59B081BA2877F43A00370BDA /* Views */,
 				590577C8286EDFBD000C2D31 /* Sleeper */,
 				59A111792864E95700A0EA34 /* AppDelegate.swift */,
 				59A1117B2864E95700A0EA34 /* SceneDelegate.swift */,
@@ -93,12 +94,19 @@
 				59A111842864E95800A0EA34 /* LaunchScreen.storyboard */,
 				59A111872864E95800A0EA34 /* Info.plist */,
 				59A1118D2864E9DA00A0EA34 /* PlayerTableViewController.swift */,
-				59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */,
-				59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */,
 				590577C9286EE015000C2D31 /* PlayerDetailViewController.swift */,
 				590577CB286EE590000C2D31 /* UIView+Extensions.swift */,
 			);
 			path = Keeper;
+			sourceTree = "<group>";
+		};
+		59B081BA2877F43A00370BDA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				59A111C12865A70A00A0EA34 /* SubtitleRightDetailTableViewCell.swift */,
+				59B081B82877EEBF00370BDA /* RightDetailTableViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
