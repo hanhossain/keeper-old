@@ -118,8 +118,9 @@ class PlayerTableViewController: UITableViewController, UISearchResultsUpdating 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let sectionHeader = sectionHeaders[indexPath.section]
         let player = filteredPlayers[sectionHeader]![indexPath.row]
+        let seasonStats = seasonStatistics[player.playerId]!
         
-        let viewController = PlayerDetailViewController(player: player, sleeperClient: sleeperClient)
+        let viewController = PlayerDetailViewController(player: player, sleeperClient: sleeperClient, seasonStatistics: seasonStats)
         navigationController?.pushViewController(viewController, animated: true)
     }
     
