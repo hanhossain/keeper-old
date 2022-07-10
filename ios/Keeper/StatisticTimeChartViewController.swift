@@ -1,5 +1,5 @@
 //
-//  StatisticDetailViewController.swift
+//  StatisticTimeChartViewController.swift
 //  Keeper
 //
 //  Created by Han Hossain on 7/7/22.
@@ -8,15 +8,15 @@
 import Charts
 import UIKit
 
-class StatisticDetailViewController: UIViewController {
+class StatisticTimeChartViewController: UIViewController {
     private let aggregatedStatistics: [(stat: String, week: Int, value: Double?)]
     
-    init(statName: String, aggregatedStatistics: [(String, Int, Double?)]) {
+    init(aggregatedStatistics: [(String, Int, Double?)]) {
         self.aggregatedStatistics = aggregatedStatistics.sorted { $0.1 < $1.1 }
         
         super.init(nibName: nil, bundle: nil)
         
-        title = statName
+        title = "Time chart"
         view.backgroundColor = .systemBackground
     }
     

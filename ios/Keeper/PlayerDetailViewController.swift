@@ -106,8 +106,12 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
         let statKey = statisticsKeys[indexPath.row]
 
         if let aggregatedStats = aggregatedStatistics[statKey] {
-            let vc = StatisticDetailViewController(statName: statKey, aggregatedStatistics: aggregatedStats)
-            navigationController?.pushViewController(vc, animated: true)
+            let statisticTimeChartViewController = StatisticTimeChartViewController(aggregatedStatistics: aggregatedStats)
+            statisticTimeChartViewController.tabBarItem.image = UIImage(systemName: "chart.xyaxis.line")
+            
+            let tabBarController = UITabBarController()
+            tabBarController.setViewControllers([statisticTimeChartViewController], animated: true)
+            navigationController?.pushViewController(tabBarController, animated: true)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
