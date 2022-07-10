@@ -135,6 +135,7 @@
         <Folder Include="Sleeper\" />
         <Folder Include="Sleeper\Models\" />
         <Folder Include="Views\" />
+        <Folder Include="ViewControllers\" />
     </ItemGroup>
     <ItemGroup>
         <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -147,17 +148,17 @@
         <Compile Include="Main.cs" />
         <Compile Include="AppDelegate.cs" />
         <Compile Include="SceneDelegate.cs" />
-        <Compile Include="PlayersTableViewController.cs" />
         <Compile Include="Extensions\UITableViewExtensions.cs" />
         <Compile Include="Sleeper\Models\SleeperPlayer.cs" />
         <Compile Include="Sleeper\SleeperClient.cs" />
         <Compile Include="Sleeper\Models\SleeperSeasonStatistics.cs" />
-        <Compile Include="PlayerDetailViewController.cs" />
         <Compile Include="Sleeper\Models\SleeperPlayerStatistics.cs" />
-        <Compile Include="StatisticDetailViewController.cs" />
         <Compile Include="Views\SubtitleTableViewCell.cs" />
         <Compile Include="Views\SubtitleRightDetailViewCell.cs" />
         <Compile Include="Views\RightDetailTableViewCell.cs" />
+        <Compile Include="ViewControllers\PlayerDetailViewController.cs" />
+        <Compile Include="ViewControllers\PlayersTableViewController.cs" />
+        <Compile Include="ViewControllers\StatisticDetailViewController.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

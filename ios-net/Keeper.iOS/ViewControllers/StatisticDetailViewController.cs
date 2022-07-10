@@ -6,7 +6,7 @@ using Keeper.iOS.Views;
 using MathNet.Numerics.Statistics;
 using UIKit;
 
-namespace Keeper.iOS;
+namespace Keeper.iOS.ViewControllers;
 
 public class StatisticDetailViewController : UITableViewController
 {

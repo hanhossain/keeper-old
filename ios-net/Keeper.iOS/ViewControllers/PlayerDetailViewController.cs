@@ -8,7 +8,7 @@ using Keeper.iOS.Sleeper.Models;
 using Keeper.iOS.Views;
 using UIKit;
 
-namespace Keeper.iOS;
+namespace Keeper.iOS.ViewControllers;
 
 public class PlayerDetailViewController : UIViewController, IUITableViewDataSource, IUITableViewDelegate
 {
