@@ -9,14 +9,15 @@ import Charts
 import UIKit
 
 class StatisticTimeChartViewController: UIViewController {
-    private let aggregatedStatistics: [(stat: String, week: Int, value: Double?)]
+    private let aggregatedStatistics: [(stat: String, week: Int, value: Double)]
     
-    init(aggregatedStatistics: [(String, Int, Double?)]) {
+    init(aggregatedStatistics: [(String, Int, Double)]) {
         self.aggregatedStatistics = aggregatedStatistics.sorted { $0.1 < $1.1 }
         
         super.init(nibName: nil, bundle: nil)
         
         title = "Time chart"
+        tabBarItem.image = UIImage(systemName: "chart.xyaxis.line")
         view.backgroundColor = .systemBackground
     }
     
@@ -27,7 +28,7 @@ class StatisticTimeChartViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let entries = aggregatedStatistics.map { ChartDataEntry(x: Double($0.week), y: $0.value ?? 0) }
+        let entries = aggregatedStatistics.map { ChartDataEntry(x: Double($0.week), y: $0.value) }
         let dataSet = LineChartDataSet(entries: entries, label: "2021")
         
         let chartView = LineChartView()

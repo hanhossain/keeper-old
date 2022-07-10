@@ -16,7 +16,7 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
     
     private var tableView: UITableView!
     private var playerStatistics = [Int: PlayerStatistics?]()
-    private var aggregatedStatistics = [String: [(stat: String, week: Int, value: Double?)]]()
+    private var aggregatedStatistics = [String: [(stat: String, week: Int, value: Double)]]()
     
     init(player: Player, sleeperClient: SleeperClient, seasonStatistics: SeasonStatistics) {
         self.player = player
@@ -106,11 +106,11 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
         let statKey = statisticsKeys[indexPath.row]
 
         if let aggregatedStats = aggregatedStatistics[statKey] {
+            let statisticSummaryViewController = StatisticSummaryViewController(aggregatedStatistics: aggregatedStats)
             let statisticTimeChartViewController = StatisticTimeChartViewController(aggregatedStatistics: aggregatedStats)
-            statisticTimeChartViewController.tabBarItem.image = UIImage(systemName: "chart.xyaxis.line")
             
             let tabBarController = UITabBarController()
-            tabBarController.setViewControllers([statisticTimeChartViewController], animated: true)
+            tabBarController.setViewControllers([statisticSummaryViewController, statisticTimeChartViewController], animated: true)
             navigationController?.pushViewController(tabBarController, animated: true)
         }
 
