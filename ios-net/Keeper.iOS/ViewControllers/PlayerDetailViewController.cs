@@ -136,10 +136,16 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
 
         if (_aggregatedStatistics.TryGetValue(key, out var aggregatedStatistics))
         {
-            var statisticViewController = new StatisticDetailViewController(aggregatedStatistics.Values);
+            var statisticViewController = new StatisticSummaryViewController(aggregatedStatistics.Values);
+            var statisticTimeChartViewController = new StatisticTimeChartViewController(aggregatedStatistics);
+
             var tabBarController = new UITabBarController()
             {
-                ViewControllers = new[] { statisticViewController }
+                ViewControllers = new UIViewController[]
+                {
+                    statisticViewController,
+                    statisticTimeChartViewController
+                }
             };
             NavigationController.PushViewController(tabBarController, true);
         }

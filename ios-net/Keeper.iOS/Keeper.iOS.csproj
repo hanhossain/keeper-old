@@ -158,7 +158,8 @@
         <Compile Include="Views\RightDetailTableViewCell.cs" />
         <Compile Include="ViewControllers\PlayerDetailViewController.cs" />
         <Compile Include="ViewControllers\PlayersTableViewController.cs" />
-        <Compile Include="ViewControllers\StatisticDetailViewController.cs" />
+        <Compile Include="ViewControllers\StatisticSummaryViewController.cs" />
+        <Compile Include="ViewControllers\StatisticTimeChartViewController.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

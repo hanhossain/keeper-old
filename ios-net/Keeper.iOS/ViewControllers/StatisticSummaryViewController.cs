@@ -8,12 +8,12 @@ using UIKit;
 
 namespace Keeper.iOS.ViewControllers;
 
-public class StatisticDetailViewController : UITableViewController
+public class StatisticSummaryViewController : UITableViewController
 {
-    private const string CellId = nameof(StatisticDetailViewController);
+    private const string CellId = nameof(StatisticSummaryViewController);
     private readonly List<(string, double)> _statistics;
 
-    public StatisticDetailViewController(IEnumerable<double> rawData)
+    public StatisticSummaryViewController(IEnumerable<double> rawData)
     {
         var descriptiveStatistics = new DescriptiveStatistics(rawData);
         var fiveNumberSummary = rawData.FiveNumberSummary();
