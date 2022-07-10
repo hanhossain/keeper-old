@@ -104,12 +104,12 @@ class PlayerDetailViewController: UIViewController, UITableViewDataSource, UITab
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let statKey = statisticsKeys[indexPath.row]
-        guard let aggregatedStats = aggregatedStatistics[statKey] else {
-            tableView.deselectRow(at: indexPath, animated: true)
-            return
+
+        if let aggregatedStats = aggregatedStatistics[statKey] {
+            let vc = StatisticDetailViewController(statName: statKey, aggregatedStatistics: aggregatedStats)
+            navigationController?.pushViewController(vc, animated: true)
         }
-        
-        let vc = StatisticDetailViewController(statName: statKey, aggregatedStatistics: aggregatedStats)
-        navigationController?.pushViewController(vc, animated: true)
+
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
