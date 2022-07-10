@@ -1,7 +1,7 @@
 ﻿using Foundation;
 using UIKit;
 
-namespace Keeper.iOS;
+namespace Keeper.iOS.Views;
 
 public class RightDetailTableViewCell : UITableViewCell
 {
