@@ -22,6 +22,7 @@
 		59B081BC2877F52000370BDA /* StatisticTimeChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081BB2877F52000370BDA /* StatisticTimeChartViewController.swift */; };
 		59B081C02877F91500370BDA /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = 59B081BF2877F91500370BDA /* Charts */; };
 		59B081C42877FA7900370BDA /* PlayerStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B081C32877FA7900370BDA /* PlayerStatistics.swift */; };
+		59D2C3A4287AB0A80074C6F7 /* SigmaSwiftStatistics in Frameworks */ = {isa = PBXBuildFile; productRef = 59D2C3A3287AB0A80074C6F7 /* SigmaSwiftStatistics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59B081C02877F91500370BDA /* Charts in Frameworks */,
+				59D2C3A4287AB0A80074C6F7 /* SigmaSwiftStatistics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +145,7 @@
 			name = Keeper;
 			packageProductDependencies = (
 				59B081BF2877F91500370BDA /* Charts */,
+				59D2C3A3287AB0A80074C6F7 /* SigmaSwiftStatistics */,
 			);
 			productName = Keeper;
 			productReference = 59A111762864E95700A0EA34 /* Keeper.app */;
@@ -174,6 +177,7 @@
 			mainGroup = 59A1116D2864E95700A0EA34;
 			packageReferences = (
 				59B081BE2877F91500370BDA /* XCRemoteSwiftPackageReference "Charts" */,
+				59D2C3A2287AB0A80074C6F7 /* XCRemoteSwiftPackageReference "SigmaSwiftStatistics" */,
 			);
 			productRefGroup = 59A111772864E95700A0EA34 /* Products */;
 			projectDirPath = "";
@@ -430,6 +434,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		59D2C3A2287AB0A80074C6F7 /* XCRemoteSwiftPackageReference "SigmaSwiftStatistics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/SigmaSwiftStatistics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -437,6 +449,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 59B081BE2877F91500370BDA /* XCRemoteSwiftPackageReference "Charts" */;
 			productName = Charts;
+		};
+		59D2C3A3287AB0A80074C6F7 /* SigmaSwiftStatistics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59D2C3A2287AB0A80074C6F7 /* XCRemoteSwiftPackageReference "SigmaSwiftStatistics" */;
+			productName = SigmaSwiftStatistics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
