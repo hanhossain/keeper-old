@@ -12,7 +12,7 @@ public class StatisticDetailViewController : UITableViewController
     private const string CellId = nameof(StatisticDetailViewController);
     private readonly List<(string, double)> _statistics;
 
-    public StatisticDetailViewController(string statName, IEnumerable<double> rawData)
+    public StatisticDetailViewController(IEnumerable<double> rawData)
     {
         var descriptiveStatistics = new DescriptiveStatistics(rawData);
         var fiveNumberSummary = rawData.FiveNumberSummary();
@@ -32,7 +32,8 @@ public class StatisticDetailViewController : UITableViewController
             ("Kurtosis", descriptiveStatistics.Kurtosis)
         };
 
-        Title = statName;
+        Title = "Sumary";
+        TabBarItem.Image = UIImage.GetSystemImage("sum");
     }
 
     public override void ViewDidLoad()
