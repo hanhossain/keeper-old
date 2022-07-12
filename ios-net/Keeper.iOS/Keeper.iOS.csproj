@@ -75,6 +75,9 @@
         <Reference Include="System.Core" />
         <Reference Include="Xamarin.iOS" />
         <Reference Include="System.Net.Http" />
+        <Reference Include="Syncfusion.SFChart.iOS">
+          <HintPath>..\..\..\..\Documents\Syncfusion\20.2.0.36\Xamarin\lib\ios-unified\Syncfusion.SFChart.iOS.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
@@ -160,6 +163,8 @@
         <Compile Include="ViewControllers\PlayersTableViewController.cs" />
         <Compile Include="ViewControllers\StatisticSummaryViewController.cs" />
         <Compile Include="ViewControllers\StatisticTimeChartViewController.cs" />
+        <Compile Include="Extensions\StringExtensions.cs" />
+        <Compile Include="Extensions\UIViewExtensions.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
