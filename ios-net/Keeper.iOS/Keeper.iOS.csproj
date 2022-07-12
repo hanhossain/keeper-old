@@ -165,6 +165,7 @@
         <Compile Include="ViewControllers\StatisticTimeChartViewController.cs" />
         <Compile Include="Extensions\StringExtensions.cs" />
         <Compile Include="Extensions\UIViewExtensions.cs" />
+        <Compile Include="ViewControllers\StatisticHistogramChartViewController.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

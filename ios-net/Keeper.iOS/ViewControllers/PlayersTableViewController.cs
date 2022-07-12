@@ -67,12 +67,17 @@ public class PlayersTableViewController : UITableViewController, IUISearchResult
 
         cell.MainLabel.Text = $"{player.FirstName} {player.LastName}";
 
-        if (_seasonStatistics[player.PlayerId].Stats?.TryGetValue("pts_std", out var points) == true)
+        if (_seasonStatistics.TryGetValue(player.PlayerId, out var playerStatistics) && playerStatistics.Stats?.TryGetValue("pts_std", out var points) == true)
         {
             cell.RightLabel.Text = points.ToString();
         }
+        else
+        {
+            cell.RightLabel.Text = null;
+        }
 
         cell.SubtitleLabel.Text = $"{player.Position} - {player.Team}";
+        cell.Accessory = _seasonStatistics.ContainsKey(player.PlayerId) ? UITableViewCellAccessory.DisclosureIndicator : UITableViewCellAccessory.None;
 
         return cell;
     }
@@ -86,11 +91,16 @@ public class PlayersTableViewController : UITableViewController, IUISearchResult
     {
         var sectionHeader = _sectionHeaders[indexPath.Section];
         var player = _filteredPlayers[sectionHeader][indexPath.Row];
-        var seasonStatistics = _seasonStatistics[player.PlayerId];
+        if (_seasonStatistics.TryGetValue(player.PlayerId, out var seasonStatistics))
+        {
+            var playerDetailController = new PlayerDetailViewController(player, _sleeperClient, seasonStatistics);
 
-        var playerDetailController = new PlayerDetailViewController(player, _sleeperClient, seasonStatistics);
-
-        NavigationController.PushViewController(playerDetailController, true);
+            NavigationController.PushViewController(playerDetailController, true);
+        }
+        else
+        {
+            tableView.DeselectRow(indexPath, true);
+        }
     }
 
     public void UpdateSearchResultsForSearchController(UISearchController searchController)

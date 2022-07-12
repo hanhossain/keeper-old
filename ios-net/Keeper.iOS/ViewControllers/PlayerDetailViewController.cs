@@ -138,13 +138,15 @@ public class PlayerDetailViewController : UIViewController, IUITableViewDataSour
         {
             var statisticViewController = new StatisticSummaryViewController(aggregatedStatistics.Values);
             var statisticTimeChartViewController = new StatisticTimeChartViewController(aggregatedStatistics);
+            var statisticHistogramChartViewController = new StatisticHistogramChartViewController();
 
             var tabBarController = new UITabBarController()
             {
                 ViewControllers = new UIViewController[]
                 {
                     statisticViewController,
-                    statisticTimeChartViewController
+                    statisticTimeChartViewController,
+                    statisticHistogramChartViewController
                 }
             };
             NavigationController.PushViewController(tabBarController, true);
